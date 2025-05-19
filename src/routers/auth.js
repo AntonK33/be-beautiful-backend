@@ -1,32 +1,19 @@
-import { Router } from 'express';
+import { Router } from "express";
 
-import { validateBody } from '../middlewares/validateBody.js';
-import { ctrlWrapper } from '../utils/ctrlWrapper.js';
+import { registerController } from "../controllers/auth.js";
+import { ctrlWrapper } from "../utils/ctrlWrapper.js";
+import { validateBody } from "../middlewares/validateBody.js";
+// import { upload } from "../middlewares/multer.js";
+// import { authentication } from "../middlewares/authentication.js";
+import { registerUserSchema } from "../validation/auth.js";
 
-import { loginUserSchema, registerUserSchema } from '../validation/auth.js';
-import {
-  loginUserController,
-  registerUserController,
-  refreshUserController,
-  logoutUserController,
-} from '../controllers/auth.js';
+const authRouter = Router();
 
-const router = Router();
-
-router.post(
-  '/register',
+authRouter.post(
+  "/register",
+  // upload.single("avatarUrlLocal"),
   validateBody(registerUserSchema),
-  ctrlWrapper(registerUserController),
+  ctrlWrapper(registerController)
 );
 
-router.post(
-  '/login',
-  validateBody(loginUserSchema),
-  ctrlWrapper(loginUserController),
-);
-
-router.post('/refresh', ctrlWrapper(refreshUserController));
-
-router.post('/logout', ctrlWrapper(logoutUserController));
-
-export default router;
+export default authRouter;
