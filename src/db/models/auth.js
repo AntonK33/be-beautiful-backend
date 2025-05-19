@@ -28,7 +28,6 @@ const userSchema = new Schema(
     },
     gender: {
       type: String,
-      required: true,
       enum: ["woman", "man"],
       default: "woman",
     },
@@ -45,12 +44,10 @@ const userSchema = new Schema(
   }
 );
 
-userSchema.methods.toJSON = function (doc, ret) {
+userSchema.methods.toJSON = function () {
   const obj = this.toObject();
   delete obj.password;
-  obj.id = obj._id.toString();
-  delete obj._id;
   return obj;
 };
 
-export const UsersCollection = model("User", userSchema);
+export const UsersCollection = model("users", userSchema);
