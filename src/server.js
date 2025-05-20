@@ -5,8 +5,8 @@ import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import helmet from "helmet";
 import compression from "compression";
+import apiRouter from "./routers/apiRouter.js";
 import { getEnvVar } from "./utils/getEnvVar.js";
-import indexRouter from "./routers/index.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
 import { notFoundHandler } from "./middlewares/notFoundHandler.js";
 
@@ -48,8 +48,7 @@ export async function setupServer() {
     })
   );
 
-  app.use(indexRouter);
-
+  app.use("/api", apiRouter);
   app.use(notFoundHandler);
   app.use(errorHandler);
 
