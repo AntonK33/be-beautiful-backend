@@ -1,8 +1,72 @@
 import createHttpError from "http-errors";
+import crypto from "crypto";
 import bcrypt from "bcrypt";
 
 import { UsersCollection } from "../db/models/auth.js";
 import { SessionCollection } from "../db/models/session.js";
+
+const createSession = () => {
+  const accessToken = crypto.randomBytes(30).toString("base64");
+  const refreshToken = crypto.randomBytes(30).toString("base64");
+
+  return {
+    accessToken,
+    refreshToken,
+    accessTokenValidUntil: new Date(Date.now() + 15 * 60 * 1000),
+    refreshTokenValidUntil: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+  };
+};
+
+const createAndSaveSession = async (userId) => {
+  const newSession = createSession();
+
+  return await SessionCollection.create({ userId, ...newSession });
+};
+
+const saveAvatar = async (file) => {
+  let cloudinaryUrl = null;
+  let localUrl = null;
+
+  if (
+    process.env.STORAGE_TYPE === "cloudinary" ||
+    process.env.STORAGE_TYPE === "both"
+  ) {
+    const result = await uploadToCloudinary(file.path);
+    cloudinaryUrl = result.secure_url;
+  }
+
+  if (
+    process.env.STORAGE_TYPE === "local" ||
+    process.env.STORAGE_TYPE === "both"
+  ) {
+    const uploadsDir = path.resolve("src", "public/photos");
+    await fs.mkdir(uploadsDir, { recursive: true });
+
+    const avatarFilename = `${Date.now()}-${file.originalname}`;
+    const avatarFinalPath = path.resolve(uploadsDir, avatarFilename);
+
+    await fs.rename(file.path, avatarFinalPath);
+    localUrl = `/photos/${avatarFilename}`;
+  }
+
+  return { cloudinaryUrl, localUrl };
+};
+
+const deleteAvatar = async (avatarUrl, storageType) => {
+  if (!avatarUrl) return;
+
+  try {
+    if (storageType === "cloudinary") {
+      const publicId = avatarUrl.split("/").slice(-1)[0].split(".")[0];
+      await cloudinary.v2.uploader.destroy(publicId);
+    } else if (storageType === "local") {
+      const filePath = path.resolve("src", "public", avatarUrl);
+      await fs.unlink(filePath);
+    }
+  } catch (error) {
+    console.warn("Failed to delete avatar:", error.message);
+  }
+};
 
 export const registerUser = async (payload, file) => {
   const userExists = await UsersCollection.findOne({
@@ -33,16 +97,16 @@ export const loginUser = async (email, password) => {
   });
 
   if (!user) {
-    throw createHttpError(401, "Credentials not verified");
+    throw createHttpError(401, "User not found");
   }
 
   const isPasswordMatch = await bcrypt.compare(password, user.password);
   if (!isPasswordMatch) {
-    throw createHttpError(401, "Credentials not verified");
+    throw createHttpError(401, "Unauthorized");
   }
   const userId = user._id;
 
-  await SessionCollection.deleteOne({ userId });
+  // await SessionCollection.deleteOne({ userId });
 
   return await createAndSaveSession(userId);
 };
