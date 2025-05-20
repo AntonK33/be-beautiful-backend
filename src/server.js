@@ -1,23 +1,20 @@
-import express from 'express';
-import pino from 'pino-http';
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
-import dotenv from 'dotenv';
-
-import { getEnvVar } from './utils/getEnvVar.js';
-import indexRouter from './routers/index.js';
-import { errorHandler } from './middlewares/errorHandler.js';
-import { notFoundHandler } from './middlewares/notFoundHandler.js';
-
+import express from "express";
+import pino from "pino-http";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import dotenv from "dotenv";
+import helmet from "helmet";
+import compression from "compression";
+import apiRouter from "./routers/apiRouter.js";
+import { getEnvVar } from "./utils/getEnvVar.js";
+import { errorHandler } from "./middlewares/errorHandler.js";
+import { notFoundHandler } from "./middlewares/notFoundHandler.js";
 
 dotenv.config();
 
 export async function setupServer() {
-  const PORT = Number(getEnvVar('PORT', '3000'));
+  const PORT = Number(getEnvVar("PORT", "3000"));
   const app = express();
-
-  
-
 
   // const allowedOrigins = [
   //   'http://localhost:3000',
@@ -37,6 +34,8 @@ export async function setupServer() {
   //     credentials: true,
   //   }),
   // );
+  app.use(helmet());
+  app.use(compression());
   app.use(cors());
   app.use(express.json());
   app.use(cookieParser());
@@ -44,18 +43,16 @@ export async function setupServer() {
   app.use(
     pino({
       transport: {
-        target: 'pino-pretty',
+        target: "pino-pretty",
       },
-    }),
+    })
   );
 
-  app.use(indexRouter);
-  
+  app.use("/api", apiRouter);
   app.use(notFoundHandler);
   app.use(errorHandler);
 
   app.listen(PORT, () => {
     console.log(`🚀 Server is running on port ${PORT}`);
-  
   });
 }
