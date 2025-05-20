@@ -7,7 +7,6 @@
     "lint": "eslint src/**/*.js",
     "start": "node ./src/index.js",
     "dev": "nodemon src/index.js"
-   
   },
   "repository": {
     "type": "git",
@@ -24,7 +23,6 @@
   "description": "",
   "devDependencies": {
     "@eslint/js": "^9.24.0",
-    
     "eslint": "^9.24.0",
     "globals": "^16.0.0",
     "nodemon": "^3.1.9",
@@ -39,6 +37,7 @@
     "express": "^5.1.0",
     "http-errors": "^2.0.0",
     "joi": "^17.13.3",
+    "mongodb": "^6.16.0",
     "mongoose": "^8.13.2",
     "pino-http": "^10.4.0",
     "swagger-ui-express": "^5.0.1"
