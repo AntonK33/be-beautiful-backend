@@ -41,6 +41,7 @@
     "joi": "^17.13.3",
     "mongodb": "^6.16.0",
     "mongoose": "^8.13.2",
+    "multer": "^2.0.0",
     "pino-http": "^10.4.0",
     "swagger-ui-express": "^5.0.1"
   }
