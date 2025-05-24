@@ -36,6 +36,7 @@ const productSchema = new Schema(
             type: String,
             enum: ['hair', 'face', 'body', 'makeup', 'home'],
             default: 'hair',
+            required: true,
         },
         isVegan: { type: Boolean, default: false },
         imageUrl: String,
