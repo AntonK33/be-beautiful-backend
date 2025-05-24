@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import { registerController } from "../controllers/auth.js";
+import { logoutController, registerController } from "../controllers/auth.js";
 import { ctrlWrapper } from "../utils/ctrlWrapper.js";
 import { validateBody } from "../middlewares/validateBody.js";
 // import { upload } from "../middlewares/multer.js";
@@ -21,5 +21,7 @@ authRouter.post(
   validateBody(loginUserSchema),
   ctrlWrapper(loginController)
 );
+
+userRouter.post("/logout", ctrlWrapper(logoutController));
 
 export default authRouter;

@@ -1,4 +1,4 @@
-import { loginUser, registerUser } from "../services/auth.js";
+import { loginUser, logoutUser, registerUser } from "../services/auth.js";
 
 export const registerController = async (req, res) => {
   const payload = {
@@ -58,4 +58,24 @@ export const loginController = async (req, res) => {
       refreshToken: session.refreshToken,
     },
   });
+};
+
+export const logoutController = async (req, res) => {
+  const { accessToken } = req.body;
+
+  if (!accessToken) {
+    return res.status(401).json({
+      status: 401,
+      message: "Session not found",
+    });
+  }
+
+  if (accessToken) {
+    await logoutUser(accessToken);
+  }
+
+  res.clearCookie("refreshToken");
+  res.clearCookie("accessToken");
+
+  res.status(204).send();
 };

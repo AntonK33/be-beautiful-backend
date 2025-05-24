@@ -135,3 +135,11 @@ export const loginUser = async (email, password, req) => {
 
   return await createAndSaveSession(user._id, deviceInfo);
 };
+
+export const logoutUser = async (accessToken) => {
+  if (!accessToken) {
+    throw createHttpError(401, "Session not found");
+  }
+
+  return await SessionCollection.deleteOne({ accessToken });
+};
