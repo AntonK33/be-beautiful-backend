@@ -9,13 +9,26 @@ export const registerController = async (req, res) => {
 
   const file = req.file;
 
-  const email = await registerUser(payload, file, req);
+  const session = await registerUser(payload, file, req);
+
+  res.cookie("refreshToken", session.refreshToken, {
+    httpOnly: true,
+    secure: true,
+    expires: session.refreshTokenValidUntil,
+  });
+
+  res.cookie("sessionId", session._id, {
+    httpOnly: true,
+    secure: true,
+    expires: session.refreshTokenValidUntil,
+  });
 
   res.status(201).json({
     status: 201,
     message: "User registered successfully!",
     data: {
-      email,
+      accessToken: session.accessToken,
+      refreshToken: session.refreshToken,
     },
   });
 };
