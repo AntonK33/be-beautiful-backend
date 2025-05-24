@@ -9,7 +9,7 @@ export const registerController = async (req, res) => {
 
   const file = req.file;
 
-  const email = await registerUser(payload, file);
+  const email = await registerUser(payload, file, req);
 
   res.status(201).json({
     status: 201,
@@ -23,7 +23,7 @@ export const registerController = async (req, res) => {
 export const loginController = async (req, res) => {
   const { email, password } = req.body;
 
-  const session = await loginUser(email, password);
+  const session = await loginUser(email, password, req);
 
   res.cookie("refreshToken", session.refreshToken, {
     httpOnly: true,

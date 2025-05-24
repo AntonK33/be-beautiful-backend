@@ -11,6 +11,8 @@ const sessionSchema = new Schema(
     accessTokenValidUntil: { type: Date, required: true },
     refreshTokenValidUntil: { type: Date, required: true },
     language: { type: String, enum: ["en", "uk"], default: "uk" },
+    device: { type: String },
+    ip: { type: String },
   },
   {
     timestamps: true,

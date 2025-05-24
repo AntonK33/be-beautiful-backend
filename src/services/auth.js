@@ -17,10 +17,25 @@ const createSession = () => {
   };
 };
 
-const createAndSaveSession = async (userId) => {
+const createAndSaveSession = async (userId, deviceInfo) => {
+  // Очистка старых сессий (например, оставляем только 10 последних) Start
+  const sessions = await SessionCollection.find({ userId }).sort({
+    createdAt: -1,
+  });
+
+  if (sessions.length >= 10) {
+    await SessionCollection.deleteMany({
+      _id: { $in: sessions.slice(10).map((s) => s._id) },
+    });
+  }
+  // Очистка старых сессий (например, оставляем только 10 последних) Finish
   const newSession = createSession();
 
-  return await SessionCollection.create({ userId, ...newSession });
+  return await SessionCollection.create({
+    userId,
+    ...newSession,
+    ...deviceInfo,
+  });
 };
 
 const saveAvatar = async (file) => {
@@ -68,7 +83,7 @@ const deleteAvatar = async (avatarUrl, storageType) => {
   }
 };
 
-export const registerUser = async (payload, file) => {
+export const registerUser = async (payload, file, req) => {
   const userExists = await UsersCollection.findOne({
     email: payload.email,
   });
@@ -86,12 +101,18 @@ export const registerUser = async (payload, file) => {
     payload.avatarUrlLocal = localUrl;
   }
 
-  const newUser = await UsersCollection.create(payload);
+  const user = await UsersCollection.create(payload);
 
-  return newUser.email;
+  const deviceInfo = {
+    device: req.headers["user-agent"],
+    ip: req.ip,
+  };
+  // return user.email;
+
+  return await createAndSaveSession(user._id, deviceInfo);
 };
 
-export const loginUser = async (email, password) => {
+export const loginUser = async (email, password, req) => {
   const user = await UsersCollection.findOne({
     email: email.toLowerCase(),
   });
@@ -104,9 +125,13 @@ export const loginUser = async (email, password) => {
   if (!isPasswordMatch) {
     throw createHttpError(401, "Unauthorized");
   }
-  const userId = user._id;
-
+  // const userId = user._id
   // await SessionCollection.deleteOne({ userId });
 
-  return await createAndSaveSession(userId);
+  const deviceInfo = {
+    device: req.headers["user-agent"],
+    ip: req.ip,
+  };
+
+  return await createAndSaveSession(user._id, deviceInfo);
 };
