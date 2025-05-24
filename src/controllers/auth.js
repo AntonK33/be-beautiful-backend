@@ -7,9 +7,7 @@ export const registerController = async (req, res) => {
     password: req.body.password,
   };
 
-  const file = req.file;
-
-  const session = await registerUser(payload, file, req);
+  const session = await registerUser(payload, req);
 
   res.cookie("refreshToken", session.refreshToken, {
     httpOnly: true,

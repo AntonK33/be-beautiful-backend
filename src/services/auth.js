@@ -18,17 +18,17 @@ const createSession = () => {
 };
 
 const createAndSaveSession = async (userId, deviceInfo) => {
-  // Очистка старых сессий (например, оставляем только 10 последних) Start
-  const sessions = await SessionCollection.find({ userId }).sort({
-    createdAt: -1,
-  });
+  // // Очистка старых сессий (например, оставляем только 3 последних) Start
+  // const sessions = await SessionCollection.find({ userId }).sort({
+  //   createdAt: -1,
+  // });
 
-  if (sessions.length >= 10) {
-    await SessionCollection.deleteMany({
-      _id: { $in: sessions.slice(10).map((s) => s._id) },
-    });
-  }
-  // Очистка старых сессий (например, оставляем только 10 последних) Finish
+  // if (sessions.length >= 3) {
+  //   await SessionCollection.deleteMany({
+  //     _id: { $in: sessions.slice(10).map((s) => s._id) },
+  //   });
+  // }
+  // // Очистка старых сессий (например, оставляем только 3 последних) Finish
   const newSession = createSession();
 
   return await SessionCollection.create({
@@ -36,51 +36,6 @@ const createAndSaveSession = async (userId, deviceInfo) => {
     ...newSession,
     ...deviceInfo,
   });
-};
-
-const saveAvatar = async (file) => {
-  let cloudinaryUrl = null;
-  let localUrl = null;
-
-  if (
-    process.env.STORAGE_TYPE === "cloudinary" ||
-    process.env.STORAGE_TYPE === "both"
-  ) {
-    const result = await uploadToCloudinary(file.path);
-    cloudinaryUrl = result.secure_url;
-  }
-
-  if (
-    process.env.STORAGE_TYPE === "local" ||
-    process.env.STORAGE_TYPE === "both"
-  ) {
-    const uploadsDir = path.resolve("src", "public/photos");
-    await fs.mkdir(uploadsDir, { recursive: true });
-
-    const avatarFilename = `${Date.now()}-${file.originalname}`;
-    const avatarFinalPath = path.resolve(uploadsDir, avatarFilename);
-
-    await fs.rename(file.path, avatarFinalPath);
-    localUrl = `/photos/${avatarFilename}`;
-  }
-
-  return { cloudinaryUrl, localUrl };
-};
-
-const deleteAvatar = async (avatarUrl, storageType) => {
-  if (!avatarUrl) return;
-
-  try {
-    if (storageType === "cloudinary") {
-      const publicId = avatarUrl.split("/").slice(-1)[0].split(".")[0];
-      await cloudinary.v2.uploader.destroy(publicId);
-    } else if (storageType === "local") {
-      const filePath = path.resolve("src", "public", avatarUrl);
-      await fs.unlink(filePath);
-    }
-  } catch (error) {
-    console.warn("Failed to delete avatar:", error.message);
-  }
 };
 
 export const registerUser = async (payload, file, req) => {
@@ -94,20 +49,12 @@ export const registerUser = async (payload, file, req) => {
 
   payload.password = await bcrypt.hash(payload.password, 10);
 
-  if (file) {
-    const { cloudinaryUrl, localUrl } = await saveAvatar(file);
-
-    payload.avatarUrlCloudinary = cloudinaryUrl;
-    payload.avatarUrlLocal = localUrl;
-  }
-
   const user = await UsersCollection.create(payload);
 
   const deviceInfo = {
     device: req.headers["user-agent"],
     ip: req.ip,
   };
-  // return user.email;
 
   return await createAndSaveSession(user._id, deviceInfo);
 };
@@ -125,8 +72,6 @@ export const loginUser = async (email, password, req) => {
   if (!isPasswordMatch) {
     throw createHttpError(401, "Unauthorized");
   }
-  // const userId = user._id
-  // await SessionCollection.deleteOne({ userId });
 
   const deviceInfo = {
     device: req.headers["user-agent"],
@@ -134,6 +79,25 @@ export const loginUser = async (email, password, req) => {
   };
 
   return await createAndSaveSession(user._id, deviceInfo);
+};
+
+export const refreshSession = async (refreshToken) => {
+  const session = await SessionCollection.findOne({ refreshToken });
+
+  if (!session) {
+    throw createHttpError(401, "Session not found");
+  }
+
+  if (session.refreshToken !== refreshToken) {
+    throw createHttpError(401, "Invalid refresh token");
+  }
+
+  if (new Date() > session.refreshTokenValidUntil) {
+    throw createHttpError(401, "Refresh token expired");
+  }
+
+  await SessionCollection.deleteOne({ refreshToken });
+  return await createAndSaveSession(session.userId);
 };
 
 export const logoutUser = async (accessToken) => {

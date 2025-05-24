@@ -3,8 +3,6 @@ import { Router } from "express";
 import { logoutController, registerController } from "../controllers/auth.js";
 import { ctrlWrapper } from "../utils/ctrlWrapper.js";
 import { validateBody } from "../middlewares/validateBody.js";
-// import { upload } from "../middlewares/multer.js";
-// import { authentication } from "../middlewares/authentication.js";
 import { registerUserSchema } from "../validation/auth.js";
 
 const authRouter = Router();
