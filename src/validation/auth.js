@@ -31,3 +31,20 @@ export const loginUserSchema = Joi.object({
   }),
   language: Joi.string().valid("en", "uk").optional(),
 });
+
+export const updateCurrentUserSchema = Joi.object({
+  name: Joi.string().allow("").messages({
+    "string.base": "Username should be a string",
+  }),
+  email: Joi.string()
+    .email()
+    .pattern(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)
+    .messages({
+      "string.pattern.base": "Please enter a valid email address",
+      "any.required": "email is required",
+    }),
+  gender: Joi.string().valid("woman", "man"),
+  // avatarUrlCloudinary: Joi.string(),
+  // avatarUrlLocal: Joi.string(),
+  language: Joi.string().valid("en", "uk"),
+});

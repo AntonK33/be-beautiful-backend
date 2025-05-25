@@ -25,7 +25,7 @@ const createAndSaveSession = async (userId, deviceInfo) => {
 
   // if (sessions.length >= 3) {
   //   await SessionCollection.deleteMany({
-  //     _id: { $in: sessions.slice(10).map((s) => s._id) },
+  //     _id: { $in: sessions.slice(3).map((s) => s._id) },
   //   });
   // }
   // // Очистка старых сессий (например, оставляем только 3 последних) Finish
@@ -38,7 +38,7 @@ const createAndSaveSession = async (userId, deviceInfo) => {
   });
 };
 
-export const registerUser = async (payload, file, req) => {
+export const registerUser = async (payload, req) => {
   const userExists = await UsersCollection.findOne({
     email: payload.email,
   });
@@ -88,16 +88,17 @@ export const refreshSession = async (refreshToken) => {
     throw createHttpError(401, "Session not found");
   }
 
-  if (session.refreshToken !== refreshToken) {
-    throw createHttpError(401, "Invalid refresh token");
-  }
-
   if (new Date() > session.refreshTokenValidUntil) {
     throw createHttpError(401, "Refresh token expired");
   }
 
+  const deviceInfo = {
+    device: session.device,
+    ip: session.ip,
+  };
+
   await SessionCollection.deleteOne({ refreshToken });
-  return await createAndSaveSession(session.userId);
+  return await createAndSaveSession(session.userId, deviceInfo);
 };
 
 export const logoutUser = async (accessToken) => {
@@ -106,4 +107,31 @@ export const logoutUser = async (accessToken) => {
   }
 
   return await SessionCollection.deleteOne({ accessToken });
+};
+
+export const getCurrentUser = async (userId) => {
+  const user = await UsersCollection.findById(userId);
+
+  if (!user) {
+    throw createHttpError(404, "User not found");
+  }
+
+  return user;
+};
+
+export const updateUser = async (userId, updateData) => {
+  const updatedUser = await UsersCollection.findByIdAndUpdate(
+    userId,
+    { ...updateData },
+    {
+      new: true,
+      runValidators: true,
+    }
+  );
+
+  if (!updatedUser) {
+    throw createHttpError(404, "User not found");
+  }
+
+  return updatedUser;
 };

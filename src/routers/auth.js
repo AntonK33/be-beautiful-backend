@@ -1,9 +1,21 @@
 import { Router } from "express";
 
-import { logoutController, registerController } from "../controllers/auth.js";
+import {
+  getCurrentUserController,
+  loginController,
+  logoutController,
+  registerController,
+  updateCurrentUserController,
+} from "../controllers/auth.js";
 import { ctrlWrapper } from "../utils/ctrlWrapper.js";
 import { validateBody } from "../middlewares/validateBody.js";
-import { registerUserSchema } from "../validation/auth.js";
+import {
+  registerUserSchema,
+  loginUserSchema,
+  updateCurrentUserSchema,
+} from "../validation/auth.js";
+
+import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 const authRouter = Router();
 
@@ -20,6 +32,21 @@ authRouter.post(
   ctrlWrapper(loginController)
 );
 
-userRouter.post("/logout", ctrlWrapper(logoutController));
+authRouter.get(
+  "/current",
+  // upload.single('avatarUrlLocal'),
+  authMiddleware,
+  ctrlWrapper(getCurrentUserController)
+);
+
+authRouter.patch(
+  "/update-current-user",
+  // upload.single('avatarUrlLocal'),
+  validateBody(updateCurrentUserSchema),
+  authMiddleware,
+  ctrlWrapper(updateCurrentUserController)
+);
+
+authRouter.post("/logout", ctrlWrapper(logoutController));
 
 export default authRouter;
