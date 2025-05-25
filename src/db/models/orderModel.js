@@ -37,3 +37,5 @@ const orderSchema = newSchema({
         versionKey: false,
 
     })
+
+export const OrderModel = model('orders', orderSchema)
