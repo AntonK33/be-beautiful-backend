@@ -18,14 +18,14 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
-    avatarUrlCloudinary: {
-      type: String,
-      default: null,
-    },
-    avatarUrlLocal: {
-      type: String,
-      default: null,
-    },
+    // avatarUrlCloudinary: {
+    //   type: String,
+    //   default: null,
+    // },
+    // avatarUrlLocal: {
+    //   type: String,
+    //   default: null,
+    // },
     gender: {
       type: String,
       enum: ["woman", "man"],

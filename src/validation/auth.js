@@ -1,6 +1,7 @@
 import Joi from "joi";
 
 export const registerUserSchema = Joi.object({
+  name: Joi.string().min(2).max(30).required(),
   email: Joi.string()
     .email()
     .required()
@@ -14,6 +15,7 @@ export const registerUserSchema = Joi.object({
     "any.required": "Password is required",
   }),
   language: Joi.string().valid("en", "uk").optional(),
+  role: Joi.string().valid("user", "admin").optional(),
 });
 
 export const loginUserSchema = Joi.object({

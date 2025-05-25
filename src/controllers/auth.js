@@ -10,6 +10,7 @@ import {
 export const registerController = async (req, res) => {
   const payload = {
     language: req.body.language,
+    role: req.body.role,
     email: req.body.email,
     password: req.body.password,
   };
