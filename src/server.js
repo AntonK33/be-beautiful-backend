@@ -50,7 +50,7 @@ export async function setupServer() {
   app.get("/", (req, res) => {
     res.send("✅ Backend is running");
   });
-  
+  // 
   app.use("/api", apiRouter);
   app.use(notFoundHandler);
   app.use(errorHandler);
