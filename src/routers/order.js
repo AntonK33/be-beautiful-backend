@@ -10,7 +10,7 @@ import {
 
 const router = express.Router();
 
-router.post('/order', createOrderController);
+router.post('/', createOrderController);
 router.patch('/order/:id', updateOrderController);
 router.delete('/order/:id', deleteOrderController);
 router.post('/product/reserve', reserveProductController);
