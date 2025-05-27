@@ -10,7 +10,7 @@ const orderItemSchema = new Schema(
 );
 
 
-const orderSchema = newSchema({
+const orderSchema = new Schema({
     clientId: { type: String, required: true },
     customerName: { type: String },
     phone: { type: String },
