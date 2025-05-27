@@ -11,9 +11,9 @@ import {
 const router = express.Router();
 
 router.post('/', createOrderController);
-router.patch('/order/:id', updateOrderController);
-router.delete('/order/:id', deleteOrderController);
-router.post('/product/reserve', reserveProductController);
-router.get('/order/low-stock', getLowStockProductsController);
+router.patch('/:id', updateOrderController);
+router.delete('/:id', deleteOrderController);
+router.post('/reserve', reserveProductController);
+router.get('/low-stock', getLowStockProductsController);
 
 export default router;
