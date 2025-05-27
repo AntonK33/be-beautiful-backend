@@ -1,8 +1,20 @@
 import { ProductModel } from "../db/models/products.js";
 
-export const getProducts = async () => {
-  const products = await ProductModel.find();
-  return products;
+export const getProducts = async (filter = {}, page = 1, perPage = 10) => {
+  const skip = (page - 1) * perPage;
+
+  const [products, total] = await Promise.all([
+    ProductModel.find(filter).skip(skip).limit(perPage),
+    ProductModel.countDocuments(filter),
+  ]);
+
+  return {
+    products,
+    total,
+    page,
+    perPage,
+    totalPages: Math.ceil(total / perPage),
+  };
 };
 
 export const getProductById = async (id) => {
