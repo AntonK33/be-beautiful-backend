@@ -1,32 +1,52 @@
-import { Router } from 'express';
+import { Router } from "express";
 
-import { validateBody } from '../middlewares/validateBody.js';
-import { ctrlWrapper } from '../utils/ctrlWrapper.js';
-
-import { loginUserSchema, registerUserSchema } from '../validation/auth.js';
 import {
-  loginUserController,
-  registerUserController,
-  refreshUserController,
-  logoutUserController,
-} from '../controllers/auth.js';
+  getCurrentUserController,
+  loginController,
+  logoutController,
+  registerController,
+  updateCurrentUserController,
+} from "../controllers/auth.js";
+import { ctrlWrapper } from "../utils/ctrlWrapper.js";
+import { validateBody } from "../middlewares/validateBody.js";
+import {
+  registerUserSchema,
+  loginUserSchema,
+  updateCurrentUserSchema,
+} from "../validation/auth.js";
 
-const router = Router();
+import { authMiddleware } from "../middlewares/authMiddleware.js";
 
-router.post(
-  '/register',
+const authRouter = Router();
+
+authRouter.post(
+  "/register",
+  // upload.single("avatarUrlLocal"),
   validateBody(registerUserSchema),
-  ctrlWrapper(registerUserController),
+  ctrlWrapper(registerController)
 );
 
-router.post(
-  '/login',
+authRouter.post(
+  "/login",
   validateBody(loginUserSchema),
-  ctrlWrapper(loginUserController),
+  ctrlWrapper(loginController)
 );
 
-router.post('/refresh', ctrlWrapper(refreshUserController));
+authRouter.get(
+  "/current",
+  // upload.single('avatarUrlLocal'),
+  authMiddleware,
+  ctrlWrapper(getCurrentUserController)
+);
 
-router.post('/logout', ctrlWrapper(logoutUserController));
+authRouter.patch(
+  "/update-current-user",
+  // upload.single('avatarUrlLocal'),
+  validateBody(updateCurrentUserSchema),
+  authMiddleware,
+  ctrlWrapper(updateCurrentUserController)
+);
 
-export default router;
+authRouter.post("/logout", ctrlWrapper(logoutController));
+
+export default authRouter;
