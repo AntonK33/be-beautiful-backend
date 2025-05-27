@@ -2,6 +2,7 @@ import { Schema, model } from "mongoose";
 
 const productSchema = new Schema(
   {
+    id: { type: Schema.Types.ObjectId, auto: true }, 
     name: { type: String, required: true },
     sku: { type: String, default: "" },
     volumeOptions: {

@@ -86,7 +86,7 @@ export const getProductByIdController = async (req, res, next) => {
   });
 };
 
-export const createProductController = async (req, res, next) => {
+export const createProductController = async (req, res, ) => {
   const product = await createProduct(req.body);
 
   res.status(201).json({
