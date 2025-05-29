@@ -3,7 +3,7 @@ import { Schema, model } from "mongoose";
 const productSchema = new Schema(
     {
         name: { type: String, required: true },
-        sku: { type: String, default: '' },
+        sku: { type: String, default: "" },
         volumeOptions: {
             type: [String],
             required: true,
@@ -12,7 +12,7 @@ const productSchema = new Schema(
             {
                 volume: { type: String, required: true },
                 price: { type: Number, required: true },
-            }
+            },
         ],
         stockQuantity: {
             type: Number,
@@ -34,11 +34,12 @@ const productSchema = new Schema(
         inciList: [String],
         category: {
             type: String,
-            enum: ['hair', 'face', 'body', 'makeup', 'home'],
-            default: 'hair',
+            enum: ["hair", "face", "body", "makeup", "home"],
+            default: "hair",
             required: true,
         },
         isVegan: { type: Boolean, default: false },
+        isPromoted: { type: Boolean, default: false },
         imageUrl: String,
         inStock: { type: Boolean, default: true },
     },
