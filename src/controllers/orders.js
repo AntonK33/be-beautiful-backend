@@ -10,7 +10,7 @@ export const createOrderController = async (req, res, next) => {
         const { clientId, items, customerName, phone, email, comment, deliveryMethod } = req.body;
 
         if (!clientId || !Array.isArray(items) || items.length === 0) {
-            return next(createHttpError(400, 'Incorrect order: missing products or customer ID'));
+            return next(createHttpError(400, '⚠️ items is not an array'));
         }
 
         let totalAmount = 0;
