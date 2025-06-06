@@ -5,27 +5,32 @@ import {
     updateCartItem,
     deleteCartItem,
 } from '../services/cartService.js';
-import { cartItemSchema } from '../validation/cartSchemas.js';
+import { cartItemsSchema } from '../validation/cartSchemas.js';
+
 
 
 //add
 export const addInCartController = async (req, res, next) => {
     try {
-        const { error, value } = cartItemSchema.validate(req.body);
+        const { error, value } = cartItemsSchema.validate(req.body);
         if (error) {
             throw createHttpError(400, error.details[0].message);
         }
 
-        const { productId, quantity } = value;
         const userId = req.user._id;
 
-        const cart = await addInCart(userId, productId, quantity);
+        for (const item of value.items) {
+            await addInCart(userId, item.productId, item.quantity);
+        }
+
+        const cart = await getCart(userId);
 
         res.status(201).json(cart);
     } catch (err) {
         next(err);
     }
 };
+
 
 
 //get

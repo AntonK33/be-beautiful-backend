@@ -1,5 +1,5 @@
 import express from 'express';
-import { authenticate } from '../middleware/authenticate.js';
+import { authMiddleware } from '../middlewares/authMiddleware.js';
 import {
     getCartController,
     addInCartController,
@@ -10,9 +10,9 @@ import {
 const router = express.Router();
 
 
-router.get('/cart', authenticate, getCartController);
-router.post('/cart', authenticate, addInCartController);
-router.put('/cart', authenticate, updateCartItemController);
-router.delete('/cart/:productId', authenticate, deleteCartItemController);
+router.get('/', authMiddleware, getCartController);
+router.post('/', authMiddleware, addInCartController);
+router.put('/', authMiddleware, updateCartItemController);
+router.delete('/:productId', authMiddleware, deleteCartItemController);
 
 export default router;

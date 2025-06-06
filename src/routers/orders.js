@@ -10,7 +10,7 @@ import {
 
 import { validateBody } from '../middlewares/validateBody.js';
 import { isValidId } from '../middlewares/isValidId.js';
-import { orderSchema, reserveSchema } from '../schemas/orderSchemas.js';
+import { orderSchema, reserveSchema } from '../validation/orderSchemas.js';
 
 const router = express.Router();
 
