@@ -28,8 +28,8 @@ const orderSchema = new Schema({
     lowStockWarning: { type: Boolean, default: false },
     status: {
         type: String,
-        enum: ['draft', 'ordered', 'payed', 'done'],
-        default: 'draft',
+        enum: ['new', 'confirmed', 'paid', 'shipped', 'cancelled'],
+        default: 'new',
     },
 },
     {
