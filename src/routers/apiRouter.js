@@ -14,6 +14,6 @@ apiRouter.use("/transactions", transactionsRouter);
 apiRouter.use("/products", productsRouter);
 apiRouter.use("/orders", orderRouter);
 apiRouter.use("/cart", cartRoutes);
-apiRouter.use("/clients", cartRoutes);
+apiRouter.use("/clients", clientsRoutes);
 
 export default apiRouter;

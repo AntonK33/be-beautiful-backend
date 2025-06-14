@@ -15,12 +15,12 @@ const clientSchema = new Schema({
     trim: true,
   },
   user_id: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Types.ObjectId,
     ref: 'User',
   },
   methodDelivery: {
     type: String,
-    enum: ['courier', 'pickup', 'novaPoshta', 'ukrPoshta'],
+    enum: ['courier', 'postDepartment'],
   },
   address_city: {
       type: String,
@@ -43,5 +43,5 @@ const clientSchema = new Schema({
   
 });
 
-export const ClientModel = mongoose.model('Client', clientSchema);
+export const ClientModel = model('Client', clientSchema);
 

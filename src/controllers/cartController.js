@@ -49,7 +49,7 @@ export const getCartController = async (req, res, next) => {
 //update
 export const updateCartItemController = async (req, res, next) => {
     try {
-        const { error, value } = cartItemSchema.validate(req.body);
+        const { error, value } = cartItemsSchema.validate(req.body);
         if (error) {
             throw createHttpError(400, error.details[0].message);
         }

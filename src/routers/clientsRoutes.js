@@ -1,21 +1,21 @@
 import { Router } from "express";
-import { ctrlWrapper } from "../utils/ctrlWrapper";
+import { ctrlWrapper } from "../utils/ctrlWrapper.js";
 import {
     addClientsController,
-    getClientsController,
-    updateClientsController,
+    // getClientsController,
+    // updateClientsController,
     deleteClientsController
- } from "../controllers/clientsController";
+ } from "../controllers/clientsController.js";
 
 
 
 
-const clientsRouter = Router();
+const router = Router();
 
-clientsRouter.post("/", ctrlWrapper(addClientsController));
-clientsRouter.get("/", ctrlWrapper(getClientsController));
-clientsRouter.patch("/tel", ctrlWrapper(updateClientsController));
-clientsRouter.delete("/tel", ctrlWrapper(deleteClientsController));
+router.post("/", ctrlWrapper(addClientsController));
+//router.get("/", ctrlWrapper(getClientsController));
+//router.patch("/tel", ctrlWrapper(updateClientsController));
+router.delete("/tel", ctrlWrapper(deleteClientsController));
 
 
 export default router;
