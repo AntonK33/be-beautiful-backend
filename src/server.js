@@ -6,14 +6,14 @@ import dotenv from "dotenv";
 import helmet from "helmet";
 import compression from "compression";
 import apiRouter from "./routers/apiRouter.js";
-import { getEnvVar } from "./utils/getEnvVar.js";
+//import { getEnvVar } from "./utils/getEnvVar.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
 import { notFoundHandler } from "./middlewares/notFoundHandler.js";
 
 dotenv.config();
 
 export async function setupServer() {
-  const PORT = Number(getEnvVar("PORT", "3000"));
+  const PORT =  Number(process.env.PORT) || 3001;
   const app = express();
 
   // const allowedOrigins = [
@@ -47,7 +47,10 @@ export async function setupServer() {
       },
     })
   );
-
+  app.get("/", (req, res) => {
+    res.send("✅ Backend is running");
+  });
+  // 
   app.use("/api", apiRouter);
   app.use(notFoundHandler);
   app.use(errorHandler);

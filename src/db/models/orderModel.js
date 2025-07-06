@@ -10,7 +10,7 @@ const orderItemSchema = new Schema(
 );
 
 
-const orderSchema = newSchema({
+const orderSchema = new Schema({
     clientId: { type: String, required: true },
     customerName: { type: String },
     phone: { type: String },
@@ -28,8 +28,8 @@ const orderSchema = newSchema({
     lowStockWarning: { type: Boolean, default: false },
     status: {
         type: String,
-        enum: ['new', 'confirmed', 'paid', 'shipped', 'cancelled'],
-        default: 'new',
+        enum: ['draft', 'ordered', 'payed', 'done'],
+        default: 'draft',
     },
 },
     {
@@ -37,3 +37,5 @@ const orderSchema = newSchema({
         versionKey: false,
 
     })
+
+export const OrderModel = model('orders', orderSchema)
