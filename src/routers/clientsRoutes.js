@@ -10,12 +10,12 @@ import {
 
 
 
-const router = Router();
+const clientsRouter = Router();
 
-router.post("/", ctrlWrapper(addClientsController));
-router.get("/", ctrlWrapper(getAllClientsController));
-router.get("/:phoneNumber", ctrlWrapper(getClientsByTelController));
-router.delete("/:phoneNumber", ctrlWrapper(deleteClientsController));
+clientsRouter.post("/", ctrlWrapper(addClientsController));
+clientsRouter.get("/", ctrlWrapper(getAllClientsController));
+clientsRouter.get("/:phoneNumber", ctrlWrapper(getClientsByTelController));
+clientsRouter.delete("/:phoneNumber", ctrlWrapper(deleteClientsController));
 
 
-export default router;
+export default clientsRouter;
