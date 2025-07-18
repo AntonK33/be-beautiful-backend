@@ -9,7 +9,15 @@ import createHttpError from "http-errors";
 
 export const getProductsController = async (req, res, next) => {
   try {
-    const { category, isVegan, isPromoted, page = 1, perPage = 10 } = req.query;
+    const {
+      category,
+      isVegan,
+      isPromoted,
+      page = 1,
+      perPage = 10,
+      volumeOptions,
+      keyword,
+    } = req.query;
 
     const allowedCategories = ["face", "hair", "body", "makeup", "home"];
     const filter = {};
@@ -34,6 +42,20 @@ export const getProductsController = async (req, res, next) => {
 
     if (isPromoted !== undefined) {
       filter.isPromoted = isPromoted === "true";
+    }
+
+    if (volumeOptions) {
+      const volumes = volumeOptions
+        .split(",")
+        .map((v) => v.trim().toLowerCase());
+
+      if (volumes.length > 0) {
+        filter.volumeOptions = { $in: volumes };
+      }
+    }
+
+    if (keyword) {
+      filter.name = { $regex: keyword, $options: "i" };
     }
 
     const pagination = {
@@ -86,7 +108,7 @@ export const getProductByIdController = async (req, res, next) => {
   });
 };
 
-export const createProductController = async (req, res, ) => {
+export const createProductController = async (req, res) => {
   const product = await createProduct(req.body);
 
   res.status(201).json({
