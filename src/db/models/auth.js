@@ -35,6 +35,11 @@ const userSchema = new Schema(
       enum: ["user", "admin"],
       default: "user",
     },
+    agree: {
+      type: String,
+      default: "true",
+      enum: ["true", "false"],
+    },
     language: { type: String, enum: ["en", "uk"], default: "uk" },
   },
   {
