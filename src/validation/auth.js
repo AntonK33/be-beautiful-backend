@@ -16,6 +16,7 @@ export const registerUserSchema = Joi.object({
   }),
   language: Joi.string().valid("en", "uk").optional(),
   role: Joi.string().valid("user", "admin").optional(),
+  agree: Joi.string().required(),
 });
 
 export const loginUserSchema = Joi.object({
