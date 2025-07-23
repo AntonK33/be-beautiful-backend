@@ -14,6 +14,7 @@ export const registerController = async (req, res) => {
     role: req.body.role,
     email: req.body.email,
     password: req.body.password,
+    agree: req.body.agree,
   };
 
   const session = await registerUser(payload, req);
