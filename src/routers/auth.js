@@ -4,6 +4,7 @@ import {
   getCurrentUserController,
   loginController,
   logoutController,
+  refreshTokenController,
   registerController,
   updateCurrentUserController,
 } from "../controllers/auth.js";
@@ -37,6 +38,12 @@ authRouter.get(
   // upload.single('avatarUrlLocal'),
   authMiddleware,
   ctrlWrapper(getCurrentUserController)
+);
+
+authRouter.post(
+  "/refresh",
+  authMiddleware,
+  ctrlWrapper(refreshTokenController)
 );
 
 authRouter.patch(
