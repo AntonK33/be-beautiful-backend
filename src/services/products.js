@@ -3,17 +3,31 @@ import { ProductModel } from "../db/models/products.js";
 export const getProducts = async (filter = {}, page = 1, perPage = 10) => {
   const skip = (page - 1) * perPage;
 
-  const [products, total] = await Promise.all([
-    ProductModel.find(filter).skip(skip).limit(perPage),
+  const aggregationPipeline = [
+    { $match: filter },
+    {
+      $lookup: {
+        from: "reviews",
+        localField: "_id",
+        foreignField: "productId",
+        as: "reviews",
+      },
+    },
+    { $skip: skip },
+    { $limit: perPage },
+  ];
+
+  const [products, totalCount] = await Promise.all([
+    ProductModel.aggregate(aggregationPipeline),
     ProductModel.countDocuments(filter),
   ]);
 
   return {
     products,
-    total,
+    total: totalCount,
     page,
     perPage,
-    totalPages: Math.ceil(total / perPage),
+    totalPages: Math.ceil(totalCount / perPage),
   };
 };
 
