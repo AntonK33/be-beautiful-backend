@@ -20,6 +20,14 @@ export const getReviews = async (limit = 10, page = 1) => {
   };
 };
 
+export const updateReviewReaction = async (id, type) => {
+  if (!["like", "dislike"].includes(type)) return null;
+
+  const updateField =
+    type === "like" ? { $inc: { likes: 1 } } : { $inc: { dislikes: 1 } };
+  return await WebReviewModel.findByIdAndUpdate(id, updateField, { new: true });
+};
+
 export const deleteReviewById = async (id) => {
   return await WebReviewModel.findByIdAndDelete(id);
 };
