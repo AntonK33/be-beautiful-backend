@@ -5,12 +5,12 @@ const productSchema = new Schema(
     name: { type: String, required: true },
     sku: { type: String, default: "" },
     volumeOptions: {
-      type: [String],
+      type: [Number],
       required: true,
     },
     priceByVolume: [
       {
-        volume: { type: String, required: true },
+        volume: { type: Number, required: true },
         price: { type: Number, required: true },
       },
     ],
