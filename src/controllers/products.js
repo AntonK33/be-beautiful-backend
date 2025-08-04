@@ -47,7 +47,8 @@ export const getProductsController = async (req, res, next) => {
     if (volumeOptions) {
       const volumes = volumeOptions
         .split(",")
-        .map((v) => v.trim().toLowerCase());
+        .map((v) => Number(v.trim()))
+        .filter((v) => !isNaN(v));
 
       if (volumes.length > 0) {
         filter.volumeOptions = { $in: volumes };

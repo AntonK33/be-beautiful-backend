@@ -3,11 +3,11 @@ import Joi from "joi";
 export const createProductSchema = Joi.object({
   name: Joi.string().min(2).max(100).required(),
   sku: Joi.string().allow("").optional(),
-  volumeOptions: Joi.array().items(Joi.string()).min(1).required(),
+  volumeOptions: Joi.array().items(Joi.number().positive()).min(1).required(),
   priceByVolume: Joi.array()
     .items(
       Joi.object({
-        volume: Joi.string().required(),
+        volume: Joi.number().positive().required(),
         price: Joi.number().positive().required(),
       })
     )
@@ -37,10 +37,10 @@ export const createProductSchema = Joi.object({
 export const updateProductSchema = Joi.object({
   name: Joi.string().min(2).max(100),
   sku: Joi.string().allow(""),
-  volumeOptions: Joi.array().items(Joi.string()).min(1),
+  volumeOptions: Joi.array().items(Joi.number().positive()).min(1),
   priceByVolume: Joi.array().items(
     Joi.object({
-      volume: Joi.string().required(),
+      volume: Joi.number().positive().required(),
       price: Joi.number().positive().required(),
     })
   ),
