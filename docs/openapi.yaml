@@ -1,0 +1,131 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: be-beautiful-backend API
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description:
+    This is a documentation of students app
+servers:
+  - url: https://be-beautiful-backend.onrender.com
+    description: Project's url
+  
+tags:
+  - name: auth
+    description: operations with auth.
+  - name: cartController
+    description:  operations with cart.
+  - name: clientsController
+    description:  operations with clients.
+  - name: orders
+    description:  operations with orders.
+  - name: products
+    description:  operations with products.  
+  - name: rewiews
+    description:  operations with rewiews.
+  - name: webRevievsController
+    description:  operations with webRevievsController.  
+
+
+paths:
+  /auth/register:
+    post: 
+      $ref: 
+
+  /auth/login:
+    post: 
+      $ref: 
+
+  /auth/current:
+    get: 
+      $ref:  
+             
+  /auth/update-current-user:
+    post: 
+      $ref: 
+        
+  /auth/refresh:
+    post: 
+      $ref:      
+  /auth/logout:
+    post: 
+      $ref:       
+
+  /cartController:
+    post:
+      $ref: 
+    get: 
+      $ref:
+    putch: 
+      $ref:
+  /cartController/{id}:
+    delete:
+      $ref:
+
+  /clientsController:
+      post:
+        $ref: 
+      get: 
+        $ref:
+     
+  /clientsController/{phoneNumber}:
+      get: 
+        $ref:
+            delete:
+              $ref:          
+              
+  /orders:
+    post:
+      $ref: 
+  /orders/{id}:
+  putch: 
+    $ref:        
+  delete:
+    $ref:
+  /orders/reserve:
+    post:
+      $ref:
+  /orders/low-stock:
+    get:
+      $ref:
+
+  /products:   
+    post:
+      $ref: 
+    get: 
+      $ref: 
+  /products/{productId}:
+  get:
+    $ref: 
+  putch: 
+    $ref: 
+  delete:
+    $ref: 
+
+  /revievs:
+    get: 
+      $ref:
+    post: 
+      $ref:    
+  /revievs/{reviewId}:
+    put: 
+      $ref:
+    delete:
+      $ref: 
+        
+  /webReviews:
+    get: 
+      $ref:
+    post: 
+      $ref:
+  /webReviews/{id}:
+    delete: 
+      $ref:
+  /webReviews/{id}/react:
+    patch: 
+      $ref:
+   
+       
+       
+        

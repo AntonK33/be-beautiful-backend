@@ -1,0 +1,33 @@
+description: Bad request
+content:
+  application/json:
+    schema:
+      type: object
+      required:
+        - status
+        - message
+        - data
+      properties:
+        status:
+          type: integer
+          example: 400
+        message:
+          type: string
+          example: \"email\" must be a valid email
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+                example: '\"email\" must be a valid email'
+              path:
+                type: array
+                items:
+                  type: string
+                  example: 'email'
+              type:
+                type: string
+                example: 'string.email'
+              context: {}
