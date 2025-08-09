@@ -1,0 +1,21 @@
+post:
+  tags:
+    - Products
+  summary: Reserve a product
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '#/components/schemas/ReserveProductRequest'
+  responses:
+    '200':
+      description: Product reserved
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ReserveProductResponse'
+    '400':
+      description: Not enough stock
+    '404':
+      description: Product not found
