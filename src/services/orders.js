@@ -87,7 +87,7 @@ export const deleteOrder = async (id) => {
 
 
 //reserve
-export const reserveProduct = async ({ productId, selectedVolume, quantity }) => {
+export const reserveProduct = async ({ productId,  quantity }) => {
     if (!productId || !quantity) {
         throw createHttpError(400, 'ProductId and quantity required');
     }

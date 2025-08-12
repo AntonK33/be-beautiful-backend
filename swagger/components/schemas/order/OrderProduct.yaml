@@ -1,0 +1,17 @@
+type: object
+properties:
+  _id:
+   type: string
+  name:
+    type: string
+  stockQuantity:
+    type: integer
+  priceByVolume:
+    type: array
+  items:
+    type: object
+  # properties:
+    # volume:
+    #   type: string
+    # price:
+    #   type: number

@@ -1,0 +1,36 @@
+type: object
+properties:
+  id:
+    type: string
+  clientId:
+    type: string
+  customerName:
+    type: string
+  phone:
+    type: string
+  email:
+    type: string
+  comment:
+    type: string
+  deliveryMethod:
+    type: string
+    enum: [pickup, delivery]
+  items:
+    type: array
+    items:
+      $ref: 'OrderItem.yaml'
+  totalAmount:
+    type: number
+  paymentLink:
+    type: string
+  lowStockWarning:
+    type: boolean
+  status:
+    type: string
+    enum: [draft, ordered, payed, done]
+  createdAt:
+    type: string
+    format: date-time
+  updatedAt:
+    type: string
+    format: date-time

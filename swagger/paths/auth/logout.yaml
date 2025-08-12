@@ -1,0 +1,16 @@
+tags:
+  - Auth
+summary: Logout
+description: 'Log out a user'
+operationId: logout
+security: []
+responses:
+  '204':
+    description: 'Logouts the user'
+    content:
+      application/json:
+        schema:
+          type: object
+          properties: {}
+  '401':
+    $ref: '../../components/responses/401.yaml'

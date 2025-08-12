@@ -1,0 +1,23 @@
+
+      tags:
+        - Orders
+      summary: Create a new order
+      operationId: createOrderController
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../../components/schemas/order/CreateOrderRequest.yaml'
+      responses:
+        '201':
+          description: Order created successfully
+          content:
+            application/json:
+              schema:
+                $ref: ../../components/schemas/order/Order.yaml
+        '400':
+          description: Invalid request
+        '404':
+          description: Product not found

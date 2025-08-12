@@ -1,0 +1,13 @@
+type: object
+properties:
+  userId:
+    type: string
+  items:
+    type: array
+    items:
+      $ref: '../cart/CartItem.yaml'
+  address:
+    type: string
+required:
+  - userId
+  - items

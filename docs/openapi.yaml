@@ -1,0 +1,132 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+  title: be-beautiful-backend API
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  description:
+    This is a documentation of students app
+servers:
+  - url: https://be-beautiful-backend.onrender.com
+    description: Project's url
+  
+tags:
+  - name: auth
+    description: operations with auth.
+  - name: cartController
+    description:  operations with cart.
+  - name: clientsController
+    description:  operations with clients.
+  - name: orders
+    description:  operations with orders.
+  - name: products
+    description:  operations with products.  
+  # - name: rewiews
+  #   description:  operations with rewiews.
+  # - name: webRevievs
+  #   description:  operations with webRevievs.  
+
+
+paths:
+  /auth/register:
+    post: 
+      $ref: '../swagger/paths/auth/register.yaml'
+
+  /auth/login:
+    post: 
+      $ref: '../swagger/paths/auth/login.yaml'
+
+  /auth/current:
+    get: 
+      $ref: '../swagger/paths/auth/current.yaml'
+             
+  /auth/update-current-user:
+    post: 
+      $ref: '../swagger/paths/auth/update-current-user.yaml'
+        
+  /auth/refresh:
+    post: 
+      $ref: '../swagger/paths/auth/refresh.yaml'     
+  /auth/logout:
+    post: 
+      $ref: '../swagger/paths/auth/logout.yaml'      
+
+  /cart:
+    post:
+      $ref: '../swagger/paths/cart/post.yaml'
+    get: 
+      $ref: '../swagger/paths/cart/get.yaml'
+    patch: 
+      $ref: '../swagger/paths/cart/patch.yaml'
+   
+  /cart/{productId}:  
+    delete:
+      $ref: '../swagger/paths/cart/{productId}/delete.yaml'
+
+  /clients:
+      post:
+        $ref: '../swagger/paths/clients/post.yaml'
+      get: 
+        $ref: '../swagger/paths/clients/get.yaml'
+     
+  /clients/{phoneNumber}:
+      get: 
+        $ref: '../swagger/paths/clients/{phoneNumber}/get.yaml'
+      delete:
+        $ref: '../swagger/paths/clients/{phoneNumber}/delete.yaml'         
+              
+  /orders:
+      post:
+        $ref: '../swagger/paths/orders/post.yaml'
+  /orders/{id}:
+      patch: 
+        $ref: '../swagger/paths/orders/{id}/patch.yaml'       
+      delete:
+        $ref: '../swagger/paths/orders/{id}/delete.yaml'
+  /orders/reserve:
+      post:
+        $ref: '../swagger/paths/orders/reserve/reserveProduct.yaml'
+  /orders/low-stock:
+      get:
+        $ref: '../swagger/paths/orders/low-stock/get.yaml'
+
+  /products:   
+      post:
+        $ref: '../swagger/paths/products/post.yaml'
+      get: 
+        $ref: '../swagger/paths/products/get.yaml'
+  /products/{productId}:
+      get: 
+        $ref: '../swagger/paths/products/{productId}/get.yaml'
+      patch: 
+        $ref: '../swagger/paths/products/{productId}/patch.yaml'
+      delete:
+        $ref: '../swagger/paths/products/{productId}/delete.yaml'
+
+  # /revievs:
+  #   get: 
+  #     $ref:
+  #   post: 
+  #     $ref:    
+  # /revievs/{reviewId}:
+  #   put: 
+  #     $ref:
+  #   delete:
+  #     $ref: 
+        
+  # /webReviews:
+  #   get: 
+  #     $ref:
+  #   post: 
+  #     $ref:
+  # /webReviews/{id}:
+  #   delete: 
+  #     $ref:
+  # /webReviews/{id}/react:
+  #   patch: 
+  #     $ref:
+   
+       
+       
+        

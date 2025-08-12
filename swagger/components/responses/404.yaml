@@ -1,0 +1,19 @@
+description: NotFound error
+content:
+  application/json:
+    schema:
+      type: object
+      required:
+        - status
+        - message
+        - data
+      properties:
+        status:
+          type: integer
+          example: 404
+        message:
+          type: string
+          example: NotFoundError
+        data:
+          type: string
+          example: 'Not found'

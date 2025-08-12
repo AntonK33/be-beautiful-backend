@@ -1,0 +1,31 @@
+
+  tags:
+  - Products
+  summary: Update an existing product
+  operationId: updateProductSchema
+  security: []
+  parameters:
+    - name: productId
+      in: path
+      required: true
+      description: id number of the product
+      schema:
+        type: string
+      example: "jkj3424mn234234234"
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          $ref: '../../../components/schemas/product/ProductUpdateRequest.yaml'
+  responses:
+    '200':
+      description: Product updated successfully
+      content:
+        application/json:
+          schema:
+            $ref: '../../../components/schemas/product/Product.yaml'
+    '400':
+      description: Invalid input
+    '404':
+      description: Product not found

@@ -1,0 +1,21 @@
+type: object
+description: Fields to update in the order
+properties:
+  customerName:
+    type: string
+  phone:
+    type: string
+  email:
+    type: string
+  comment:
+    type: string
+  deliveryMethod:
+    type: string
+    enum: [pickup, delivery]
+  status:
+    type: string
+    enum: [draft, ordered, payed, done]
+  items:
+    type: array
+    items:
+      $ref: 'OrderItem.yaml'

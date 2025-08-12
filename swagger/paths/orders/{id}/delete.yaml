@@ -1,0 +1,19 @@
+
+  tags:
+    - Orders
+  summary: Delete an order
+  operationId: deleteOrderController
+  security: []
+  parameters:
+    - name: id
+      in: path
+      required: true
+      description: id number of the order
+      schema:
+        type: string
+        example: "jkj3424mn234234234 "
+  responses:
+    '200':
+      description: Order deleted
+    '404':
+      description: Order not found

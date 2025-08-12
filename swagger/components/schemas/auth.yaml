@@ -1,0 +1,35 @@
+title: Auth
+type: object
+required:
+  - agree
+  - name
+  - email
+  - password
+properties:
+  agree:
+    description: "User's agreement"
+    type: string
+    example: "true"
+  name:
+    description: "User's name"
+    type: string
+    example: 'John Doe'
+    minLength: 3
+    maxLength: 20
+  email:
+    description: "User's email"
+    type: string
+    example: 'email@example.com'
+  password:
+    description: "Hashed user's password"
+    type: string
+    example: '$2b$10$RrwIu5gPU5U04YgA6kRzqePu5CEZ4LVvXPB4dfHfrklT2bHu3U9JG'
+    writeOnly: true
+  language:
+    description: "User's language"
+    type: string
+    example: Ukrainian
+  role:
+    description: "User's role"
+    type: string
+    example: "user"

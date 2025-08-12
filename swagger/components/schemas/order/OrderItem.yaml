@@ -1,0 +1,14 @@
+type: object
+properties:
+  product:
+    type: string
+    description: Product ID
+  selectedVolume:
+    type: string
+  quantity:
+    type: integer
+    minimum: 1
+required:
+  - product
+  - selectedVolume
+  - quantity

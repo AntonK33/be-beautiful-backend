@@ -1,0 +1,19 @@
+
+  tags:
+    - Clients
+  summary: Delete client
+  operationId: deleteClientsController
+  security: []
+  parameters:
+    - name: phoneNumber
+      in: path
+      required: true
+      description: Phone number of the client
+      schema:
+        type: string
+        example: "+380501234567"
+  responses:
+      '200':
+        description: 'Client deleted successfully'
+      '404':
+        description: 'Client not found'

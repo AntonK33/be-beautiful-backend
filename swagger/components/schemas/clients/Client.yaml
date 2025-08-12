@@ -1,0 +1,30 @@
+type: object
+properties:
+  _id:
+    type: string
+  name:
+    type: string
+  email:
+    type: string
+  phoneNumber:
+    type: string
+  user_id:
+    type: string
+    description: User reference ID
+  methodDelivery:
+    type: string
+    enum: [courier, postDepartment]
+  address_city:
+    type: string
+  address_street:
+    type: string
+  address_postName:
+    type: string
+  address_postDepartmentNumber:
+    type: string
+  createdAt:
+    type: string
+    format: date-time
+  updatedAt:
+    type: string
+    format: date-time
