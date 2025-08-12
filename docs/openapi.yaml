@@ -22,109 +22,110 @@ tags:
     description:  operations with orders.
   - name: products
     description:  operations with products.  
-  - name: rewiews
-    description:  operations with rewiews.
-  - name: webRevievsController
-    description:  operations with webRevievsController.  
+  # - name: rewiews
+  #   description:  operations with rewiews.
+  # - name: webRevievs
+  #   description:  operations with webRevievs.  
 
 
 paths:
   /auth/register:
     post: 
-      $ref: 
+      $ref: '../swagger/paths/auth/register.yaml'
 
   /auth/login:
     post: 
-      $ref: 
+      $ref: '../swagger/paths/auth/login.yaml'
 
   /auth/current:
     get: 
-      $ref:  
+      $ref: '../swagger/paths/auth/current.yaml'
              
   /auth/update-current-user:
     post: 
-      $ref: 
+      $ref: '../swagger/paths/auth/update-current-user.yaml'
         
   /auth/refresh:
     post: 
-      $ref:      
+      $ref: '../swagger/paths/auth/refresh.yaml'     
   /auth/logout:
     post: 
-      $ref:       
+      $ref: '../swagger/paths/auth/logout.yaml'      
 
-  /cartController:
+  /cart:
     post:
-      $ref: 
+      $ref: '../swagger/paths/cart/post.yaml'
     get: 
-      $ref:
-    putch: 
-      $ref:
-  /cartController/{id}:
+      $ref: '../swagger/paths/cart/get.yaml'
+    patch: 
+      $ref: '../swagger/paths/cart/patch.yaml'
+   
+  /cart/{productId}:  
     delete:
-      $ref:
+      $ref: '../swagger/paths/cart/{productId}/delete.yaml'
 
-  /clientsController:
+  /clients:
       post:
-        $ref: 
+        $ref: '../swagger/paths/clients/post.yaml'
       get: 
-        $ref:
+        $ref: '../swagger/paths/clients/get.yaml'
      
-  /clientsController/{phoneNumber}:
+  /clients/{phoneNumber}:
       get: 
-        $ref:
-            delete:
-              $ref:          
+        $ref: '../swagger/paths/clients/{phoneNumber}/get.yaml'
+      delete:
+        $ref: '../swagger/paths/clients/{phoneNumber}/delete.yaml'         
               
   /orders:
-    post:
-      $ref: 
+      post:
+        $ref: '../swagger/paths/orders/post.yaml'
   /orders/{id}:
-  putch: 
-    $ref:        
-  delete:
-    $ref:
+      patch: 
+        $ref: '../swagger/paths/orders/{id}/patch.yaml'       
+      delete:
+        $ref: '../swagger/paths/orders/{id}/delete.yaml'
   /orders/reserve:
-    post:
-      $ref:
+      post:
+        $ref: '../swagger/paths/orders/reserve/reserveProduct.yaml'
   /orders/low-stock:
-    get:
-      $ref:
+      get:
+        $ref: '../swagger/paths/orders/low-stock/get.yaml'
 
   /products:   
-    post:
-      $ref: 
-    get: 
-      $ref: 
+      post:
+        $ref: '../swagger/paths/products/post.yaml'
+      get: 
+        $ref: '../swagger/paths/products/get.yaml'
   /products/{productId}:
-  get:
-    $ref: 
-  putch: 
-    $ref: 
-  delete:
-    $ref: 
+      get: 
+        $ref: '../swagger/paths/products/{productId}/get.yaml'
+      patch: 
+        $ref: '../swagger/paths/products/{productId}/patch.yaml'
+      delete:
+        $ref: '../swagger/paths/products/{productId}/delete.yaml'
 
-  /revievs:
-    get: 
-      $ref:
-    post: 
-      $ref:    
-  /revievs/{reviewId}:
-    put: 
-      $ref:
-    delete:
-      $ref: 
+  # /revievs:
+  #   get: 
+  #     $ref:
+  #   post: 
+  #     $ref:    
+  # /revievs/{reviewId}:
+  #   put: 
+  #     $ref:
+  #   delete:
+  #     $ref: 
         
-  /webReviews:
-    get: 
-      $ref:
-    post: 
-      $ref:
-  /webReviews/{id}:
-    delete: 
-      $ref:
-  /webReviews/{id}/react:
-    patch: 
-      $ref:
+  # /webReviews:
+  #   get: 
+  #     $ref:
+  #   post: 
+  #     $ref:
+  # /webReviews/{id}:
+  #   delete: 
+  #     $ref:
+  # /webReviews/{id}/react:
+  #   patch: 
+  #     $ref:
    
        
        

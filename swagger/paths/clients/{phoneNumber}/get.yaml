@@ -1,0 +1,23 @@
+
+  tags:
+    - Clients
+  summary: Get client by ID
+  operationId: getClientsByTelController
+  security: []
+  parameters:
+    - name: phoneNumber
+      in: path
+      required: true
+      description: Phone number of the client
+      schema:
+        type: string
+        example: "+380501234567"
+  responses:
+    '200':
+      description: Client details
+      content:
+        application/json:
+          schema:
+            $ref: '../../../components/schemas/clients/Client.yaml'
+    '404':
+      description: Client not found

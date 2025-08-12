@@ -1,0 +1,23 @@
+
+
+  tags:
+    - Cart
+  summary: Update user's cart
+  operationId: patchCartItemController
+  security: []
+  requestBody:
+    content:
+      application/json:
+        schema:
+           $ref: '../../components/schemas/cart/CartUpdateRequest.yaml'
+  responses:
+    '200':
+      description: Updated cart
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/cart/Cart.yaml'
+    '400':
+      description: Invalid input
+    '404':
+      description: Cart not found

@@ -1,0 +1,21 @@
+
+      tags:
+        - Products
+      summary: Create a new product
+      operationId: createProductSchema
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '../../components/schemas/product/ProductCreateRequest.yaml'
+      responses:
+        '201':
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '../../components/schemas/product/Product.yaml'
+        '400':
+          description: Invalid input

@@ -1,0 +1,23 @@
+
+  tags:
+    - Products
+  summary: Get a product by ID
+  operationId: getProductByIdController
+  security: []
+  parameters:
+        - name: productId
+          in: path
+          required: true
+          description: id number of the order
+          schema:
+            type: string
+            example: "jkj3424mn234234234 "
+  responses:
+    '200':
+      description: Product details
+      content:
+        application/json:
+          schema:
+            $ref: '../../../components/schemas/product/Product.yaml'
+    '404':
+      description: Product not found

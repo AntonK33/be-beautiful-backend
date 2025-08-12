@@ -1,0 +1,17 @@
+
+tags:
+  - Clients
+summary: Get all clients
+operationId: getAllClientsController
+security: []
+responses:
+  '200':
+    description: List of clients
+    content:
+      application/json:
+        schema:
+          type: array
+          items:
+            $ref: '../../components/schemas/clients/Client.yaml'
+  '400':
+    description: 'client with this number not found'    

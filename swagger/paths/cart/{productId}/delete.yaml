@@ -1,0 +1,20 @@
+
+tags:
+  - Orders
+summary: Delete order by ID
+operationId: deleteCartItemController
+security: []
+parameters:
+  - in: path
+    name: productId
+    required: true
+    schema:
+      type: string
+    description: ID of the order to delete
+responses:
+  '200':
+    description: Order successfully deleted
+  '404':
+    description: Order not found
+  '500':
+    description: Internal server error

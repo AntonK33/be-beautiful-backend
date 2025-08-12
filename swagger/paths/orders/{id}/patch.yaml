@@ -1,0 +1,30 @@
+
+
+      tags:
+        - Orders
+      summary: Update an existing order
+      operationId: updateOrderController
+      security: []  
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID number of the order
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '../../../components/schemas/order/UpdateOrderRequest.yaml'
+      responses:
+        '200':
+          description: Updated order
+          content:
+            application/json:
+              schema:
+                $ref: ../../../components/schemas/order/Order.yaml
+        '400':
+          description: Invalid request data
+        '404':
+          description: Order not found

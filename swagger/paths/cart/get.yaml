@@ -1,0 +1,16 @@
+
+  tags:
+    - Cart
+  summary: Get user's cart
+  operationId: getCartItemController
+  security: []
+  
+  responses:
+    '200':
+      description: User's cart
+      content:
+        application/json:
+          schema:
+            $ref: '../../components/schemas/cart/Cart.yaml'
+    '404':
+      description: Cart not found

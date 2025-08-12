@@ -1,0 +1,12 @@
+type: object
+properties:
+  userId:
+    type: string
+  productId:
+    type: string
+  rating:
+    type: integer
+    minimum: 1
+    maximum: 5
+  comment:
+    type: string

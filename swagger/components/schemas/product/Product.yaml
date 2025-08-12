@@ -1,0 +1,53 @@
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        sku:
+          type: string
+        volumeOptions:
+          type: array
+          items:
+            type: string
+        priceByVolume:
+          type: array
+          items:
+            $ref: 'PriceByVolume.yaml'
+        stockQuantity:
+          type: integer
+        features:
+          type: array
+          items:
+            type: string
+        description:
+          type: string
+        instructions:
+          type: string
+        activeIngredients:
+          type: array
+          items:
+            $ref: 'ActiveIngredient.yaml'
+        inciList:
+          type: array
+          items:
+            type: string
+        category:
+          type: string
+          enum: [hair, face, body, makeup, home]
+        reviews:
+          $ref: 'Review.yaml'
+        isVegan:
+          type: boolean
+        isPromoted:
+          type: boolean
+        imageUrl:
+          type: string
+        inStock:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time

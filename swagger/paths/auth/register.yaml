@@ -31,7 +31,7 @@ requestBody:
             maxLength: 64
           gender:
             description: "User's gender"
-            type: string,
+            type: string
             enum: ["woman", "man"]
             default: "woman"    
           role:

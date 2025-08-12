@@ -1,0 +1,11 @@
+type: object
+properties:
+  volume:
+    type: string
+    example: "500ml"
+  price:
+    type: number
+    example: 19.99
+required:
+  - volume
+  - price

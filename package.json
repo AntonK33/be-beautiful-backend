@@ -48,6 +48,7 @@
     "mongodb": "^6.16.0",
     "mongoose": "^8.13.2",
     "pino-http": "^10.4.0",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-ui-express": "^5.0.1",
+    "yamljs": "^0.3.0"
   }
 }

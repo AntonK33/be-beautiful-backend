@@ -1,0 +1,6 @@
+type: object
+properties:
+  productId:
+    type: string
+  remaining:
+    type: integer

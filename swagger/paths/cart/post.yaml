@@ -1,0 +1,21 @@
+
+tags:
+  - Cart
+summary: Create a cart for a user
+operationId: postCartItemController
+security: []
+requestBody:
+  required: true
+  content:
+    application/json:
+      schema:
+        $ref: '../../components/schemas/cart/CartCreateRequest.yaml'
+responses:
+  '201':
+    description: Cart created
+    content:
+      application/json:
+        schema:
+          $ref: '../../components/schemas/cart/Cart.yaml'
+  '400':
+    description: Invalid input
