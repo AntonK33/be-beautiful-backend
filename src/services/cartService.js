@@ -66,16 +66,21 @@ export const updateCartItem = async (userId, productId, quantity) => {
 
     item.quantity = quantity;
     await cart.save();
-    return cart;
+
+    //return actuality cart 
+    return getCart(userId);
 };
+
 
 // updateCartItemsBulk
 export const updateCartItemsBulk = async (userId, items) => {
     for (const { productId, quantity } of items) {
         await updateCartItem(userId, productId, quantity);
     }
+
     return getCart(userId);
 };
+
 
 // deleteCartItem
 export const deleteCartItem = async (userId, productId) => {
