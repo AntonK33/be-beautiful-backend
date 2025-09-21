@@ -10,6 +10,7 @@ import apiRouter from "./routers/apiRouter.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
 import { notFoundHandler } from "./middlewares/notFoundHandler.js";
 import { swaggerConfig } from './middlewares/swaggerConfig.js';
+// import NovaPoshta from "novaposhta";
 
 dotenv.config();
 
@@ -19,7 +20,6 @@ export async function setupServer() {
 
   const swagger = await swaggerConfig();
   app.use('/api-docs', ...swagger);
-  
   // const allowedOrigins = [
   //   'http://localhost:3000',
   //   'http://localhost:5173',
@@ -54,6 +54,15 @@ export async function setupServer() {
   app.get("/", (req, res) => {
     res.send("✅ Backend is running");
   });
+  // const np = new NovaPoshta({ apiKey: process.env.NOVAPOSHTA_KEY });
+  // app.get("/api/np/cities", async (req, res) => {
+  //   try {
+  //     const data = await np.address.getCities();
+  //     res.json(data);
+  //   } catch (err) {
+  //     res.status(500).json({ error: err.message || "Ошибка API" });
+  //   }
+  // });
   app.use("/api", apiRouter);
   app.use(notFoundHandler);
   app.use(errorHandler);
