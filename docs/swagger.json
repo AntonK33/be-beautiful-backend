@@ -1028,6 +1028,71 @@
           }
         }
       }
+    },
+    "/np/cities": {
+      "get": {
+        "tags": [
+          "NP"
+        ],
+        "summary": "Get a list of cities",
+        "operationId": "getCities",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Successful response (list of cities)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/np/warehouses/{cityRef}": {
+      "get": {
+        "tags": [
+          "NP"
+        ],
+        "summary": "Get a list of branches using the city link",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "cityRef",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Unique identifier (Ref) of the city"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response (list of warehouses)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
     }
   },
   "components": {
