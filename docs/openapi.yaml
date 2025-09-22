@@ -103,6 +103,13 @@ paths:
         $ref: '../swagger/paths/products/{productId}/patch.yaml'
       delete:
         $ref: '../swagger/paths/products/{productId}/delete.yaml'
+  
+  /np/cities:
+    get:
+      $ref: '../swagger/paths/novaPoshta/Cities.yaml'
+  /np/warehouses/{cityRef}:
+    get:
+      $ref: '../swagger/paths/novaPoshta/Warehouses.yaml'   
 
   # /revievs:
   #   get: 

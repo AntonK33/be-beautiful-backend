@@ -1,0 +1,17 @@
+      tags:
+        - NP
+      summary: Get a list of cities
+      operationId: getCities
+      security: []
+      responses:
+        200:
+          description: Successful response (list of cities)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+        500:
+          description: Internal Server Error
+ 
