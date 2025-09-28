@@ -12,7 +12,7 @@ properties:
     type: string
   deliveryMethod:
     type: string
-    enum: [pickup, delivery]
+    enum: [nova_poshta]
   items:
     type: array
     items:

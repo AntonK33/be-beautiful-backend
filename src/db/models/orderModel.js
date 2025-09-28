@@ -19,8 +19,8 @@ const orderSchema = new Schema({
 
     deliveryMethod: {
         type: String,
-        enum: ['pickup', 'delivery'],
-        default: 'delivery',
+        enum: ['nova_poshta'],
+        default: 'nova_poshta'
     },
     items: [orderItemSchema],
     totalAmount: Number,

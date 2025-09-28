@@ -2,10 +2,24 @@ import createHttpError from 'http-errors';
 import { OrderModel } from '../db/models/orderModel.js';
 import { ProductModel } from '../db/models/products.js';
 
+//get
+export const getAllOrders = async () => {
+    return OrderModel.find().populate('items.product').sort({ createdAt: -1 });
+}
+
+//get by id
+export const getOrderById = async (id) => {
+    const order = await OrderModel.findById(id).populate('items.product');
+    if (!order) {
+        throw createHttpError(404, 'Order not found');
+    }
+    return order;
+};
+
 
 //create
 export const createOrder = async (data) => {
-    const { clientId, items, customerName, phone, email, comment, deliveryMethod } = data;
+    const { clientId, items, customerName, phone, email, comment } = data;
 
     if (!clientId || !Array.isArray(items) || items.length === 0) {
         throw createHttpError(400, '⚠️ items is not an array');
@@ -48,7 +62,7 @@ export const createOrder = async (data) => {
         phone,
         email,
         comment,
-        deliveryMethod,
+        deliveryMethod: 'nova_poshta',
         items,
         totalAmount,
         paymentLink,
@@ -87,7 +101,7 @@ export const deleteOrder = async (id) => {
 
 
 //reserve
-export const reserveProduct = async ({ productId,  quantity }) => {
+export const reserveProduct = async ({ productId, quantity }) => {
     if (!productId || !quantity) {
         throw createHttpError(400, 'ProductId and quantity required');
     }
