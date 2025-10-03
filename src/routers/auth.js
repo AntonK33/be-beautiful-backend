@@ -17,12 +17,14 @@ import {
 } from "../validation/auth.js";
 
 import { authMiddleware } from "../middlewares/authMiddleware.js";
+import { upload } from "../middlewares/upload.middleware.js";
+import multer from "multer";
 
 const authRouter = Router();
 
 authRouter.post(
   "/register",
-  // upload.single("avatarUrlLocal"),
+   upload.single("avatarUrlLocal"),
   validateBody(registerUserSchema),
   ctrlWrapper(registerController)
 );
@@ -48,7 +50,7 @@ authRouter.post(
 
 authRouter.patch(
   "/update-current-user",
-  // upload.single('avatarUrlLocal'),
+   upload.single('avatarUrlLocal'),
   validateBody(updateCurrentUserSchema),
   authMiddleware,
   ctrlWrapper(updateCurrentUserController)

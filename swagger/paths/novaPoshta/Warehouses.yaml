@@ -2,6 +2,8 @@
       tags:
         - NP
       summary: Get a list of branches using the city link
+      operationId: Warehouses
+      security: []
       parameters:
         - in: path
           name: cityRef
