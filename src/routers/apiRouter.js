@@ -16,6 +16,6 @@ apiRouter.use("/web-reviews", webReviewsRouter);
 apiRouter.use("/orders", orderRouter);
 apiRouter.use("/cart", cartRoutes);
 apiRouter.use("/clients", clientsRoutes);
-apiRouter.use("/", novaPoshta);
+apiRouter.use("/np", novaPoshta);
 
 export default apiRouter;

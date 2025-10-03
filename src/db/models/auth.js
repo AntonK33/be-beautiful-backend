@@ -2,7 +2,11 @@ import { model, Schema } from "mongoose";
 
 const userSchema = new Schema(
   {
-    name: {
+   first_name: {
+      type: String,
+      trim: true,
+    },
+    last_name: {
       type: String,
       trim: true,
     },
@@ -25,6 +29,10 @@ const userSchema = new Schema(
     //   type: String,
     //   default: null,
     // },
+    avatarUrl: {
+      type: String,
+      default: null,
+    },
     gender: {
       type: String,
       enum: ["woman", "man"],
