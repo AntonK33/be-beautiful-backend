@@ -11,7 +11,11 @@
   },
   "servers": [
     {
-      "url": "https://be-beautiful-backend.onrender.com",
+      "url": "http://localhost:3001/api",
+      "description": "Local server"
+    },
+    {
+      "url": "https://be-beautiful-backend.onrender.com/api",
       "description": "Project's url"
     }
   ],

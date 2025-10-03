@@ -19,6 +19,7 @@ export async function setupServer() {
   const app = express();
 
   const swagger = await swaggerConfig();
+  
   app.use('/api-docs', ...swagger);
   // const allowedOrigins = [
   //   'http://localhost:3000',
