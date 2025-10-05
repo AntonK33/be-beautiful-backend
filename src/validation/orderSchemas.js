@@ -17,7 +17,7 @@ export const orderSchema = Joi.object({
     phone: Joi.string().required(),
     email: Joi.string().email().optional(),
     comment: Joi.string().allow('', null),
-    deliveryMethod: Joi.string().valid('nova_poshta', 'self_pickup').required(),
+    // deliveryMethod: Joi.string().valid('nova_poshta', 'self_pickup').required(),
 });
 
 export const reserveSchema = Joi.object({

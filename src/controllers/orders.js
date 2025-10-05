@@ -1,6 +1,23 @@
 import * as orderService from '../services/orders.js';
 import createHttpError from 'http-errors';
 
+export const getAllOrdersController = async (req, res, next) => {
+    try {
+        const orders = await orderService.getAllOrders();
+        res.json(orders);
+    } catch (err) {
+        next(err);
+    }
+};
+
+export const getOrderByIdController = async (req, res, next) => {
+    try {
+        const order = await orderService.getOrderById(req.params.id);
+        res.json(order);
+    } catch (err) {
+        next(err);
+    }
+};
 
 export const createOrderController = async (req, res, next) => {
     try {

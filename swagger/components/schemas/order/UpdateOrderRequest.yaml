@@ -11,7 +11,7 @@ properties:
     type: string
   deliveryMethod:
     type: string
-    enum: [pickup, delivery]
+    enum: [nova_poshta]
   status:
     type: string
     enum: [draft, ordered, payed, done]

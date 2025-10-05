@@ -2,7 +2,10 @@ import { Schema, model } from "mongoose";
 
 const productSchema = new Schema(
   {
-    name: { type: String, required: true },
+    name: {
+      en: { type: String, required: true },
+      ua: { type: String, required: true },
+    },
     sku: { type: String, default: "" },
     volumeOptions: {
       type: [Number],
@@ -20,15 +23,27 @@ const productSchema = new Schema(
       default: 0,
     },
     features: {
-      type: [String],
-      required: true,
+      en: { type: [String], required: true },
+      ua: { type: [String], required: true },
     },
-    description: String,
-    instructions: String,
+    description: {
+      en: { type: String },
+      ua: { type: String },
+    },
+    instructions: {
+      en: { type: String },
+      ua: { type: String },
+    },
     activeIngredients: [
       {
-        name: String,
-        description: String,
+        name: {
+          en: { type: String, required: true },
+          ua: { type: String, required: true },
+        },
+        description: {
+          en: { type: String },
+          ua: { type: String },
+        },
       },
     ],
     inciList: [String],
