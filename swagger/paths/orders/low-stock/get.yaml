@@ -1,19 +1,18 @@
 tags:
   - Orders
 summary: Get low stock products
-operationId: reserveProductController
+operationId: getLowStockProductsController
 security: []
 responses:
   '200':
-    description: List of products with stockQuantity < 5
+    description: List of products with low stock (less than 5)
     content:
       application/json:
         schema:
           type: array
           items:
             $ref: '../../../components/schemas/order/OrderProduct.yaml'
-  '400':
-    description: Invalid request parameters
   '404':
-    description: No products found
-  
+    $ref: '../../../components/responses/404.yaml'
+  '500':
+    $ref: '../../../components/responses/500.yaml'

@@ -1,0 +1,23 @@
+paths:
+  /orders/{id}:
+    get:
+      tags:
+        - Orders
+      summary: Get order by ID
+      operationId: getOrderByIdController
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Order ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Order found
+          content:
+            application/json:
+              schema:
+                $ref: '../../../../components/schemas/order/Order.yaml'
+        '404':
+          $ref: '../../../../components/responses/404.yaml'
