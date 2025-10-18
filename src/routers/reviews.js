@@ -12,6 +12,7 @@ import { authMiddleware } from "../middlewares/authMiddleware.js";
 import { validateBody } from "../middlewares/validateBody.js";
 import { createReviewSchema, updateReviewSchema } from "../validation/reviews.js";
 import { ctrlWrapper } from "../utils/ctrlWrapper.js";
+import { isValidId } from "../middlewares/isValidId.js";
 
 const router = Router();
 
@@ -28,6 +29,6 @@ router.patch("/:reviewId", authMiddleware, validateBody(updateReviewSchema), ctr
 router.delete("/:reviewId", authMiddleware, ctrlWrapper(deleteReviewController));
 
 // PATCH /api/reviews/:reviewId/react - Like/dislike review (requires authentication)
-router.patch("/:reviewId/react", authMiddleware, ctrlWrapper(reactToReviewController));
+router.patch("/:reviewId/react", isValidId, authMiddleware, ctrlWrapper(reactToReviewController));
 
 export default router;
