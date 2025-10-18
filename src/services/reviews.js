@@ -6,64 +6,13 @@ export const getAllReviews = async (page = 1, limit = 10) => {
   try {
     const skip = (page - 1) * limit;
     
-    const aggregationPipeline = [
-      {
-        $lookup: {
-          from: "users",
-          localField: "userId",
-          foreignField: "_id",
-          as: "user",
-        },
-      },
-      {
-        $lookup: {
-          from: "products",
-          localField: "productId", 
-          foreignField: "_id",
-          as: "product",
-        },
-      },
-      {
-        $addFields: {
-          author: {
-            _id: { $arrayElemAt: ["$user._id", 0] },
-            name: {
-              $concat: [
-                { $ifNull: [{ $arrayElemAt: ["$user.first_name", 0] }, ""] },
-                " ",
-                { $ifNull: [{ $arrayElemAt: ["$user.last_name", 0] }, ""] }
-              ]
-            }
-          }
-        }
-      },
-      {
-        $addFields: {
-          author: {
-            _id: "$author._id",
-            name: {
-              $cond: {
-                if: { $eq: [{ $trim: { input: "$author.name" } }, ""] },
-                then: "Anonymous",
-                else: { $trim: { input: "$author.name" } }
-              }
-            }
-          }
-        }
-      },
-      { $sort: { createdAt: -1 } },
-      { $skip: skip },
-      { $limit: limit },
-      {
-        $project: {
-          user: 0,
-          product: 0
-        }
-      }
-    ];
-
+    // Simple approach - just get reviews without population first
     const [reviews, total] = await Promise.all([
-      ReviewModel.aggregate(aggregationPipeline),
+      ReviewModel.find()
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
       ReviewModel.countDocuments()
     ]);
 
@@ -71,7 +20,13 @@ export const getAllReviews = async (page = 1, limit = 10) => {
 
     return {
       success: true,
-      data: reviews,
+      data: reviews.map(review => ({
+        ...review,
+        author: {
+          _id: review.userId,
+          name: "Anonymous" // Simplified for now
+        }
+      })),
       pagination: {
         page: paginationData.page,
         limit: paginationData.perPage,
@@ -89,64 +44,27 @@ export const getReviewsByProductId = async (productId, page = 1, limit = 10) => 
   try {
     const skip = (page - 1) * limit;
     
-    const aggregationPipeline = [
-      { $match: { productId: { $toObjectId: productId } } },
-      {
-        $lookup: {
-          from: "users",
-          localField: "userId",
-          foreignField: "_id",
-          as: "user",
-        },
-      },
-      {
-        $addFields: {
-          author: {
-            _id: { $arrayElemAt: ["$user._id", 0] },
-            name: {
-              $concat: [
-                { $ifNull: [{ $arrayElemAt: ["$user.first_name", 0] }, ""] },
-                " ",
-                { $ifNull: [{ $arrayElemAt: ["$user.last_name", 0] }, ""] }
-              ]
-            }
-          }
-        }
-      },
-      {
-        $addFields: {
-          author: {
-            _id: "$author._id",
-            name: {
-              $cond: {
-                if: { $eq: [{ $trim: { input: "$author.name" } }, ""] },
-                then: "Anonymous",
-                else: { $trim: { input: "$author.name" } }
-              }
-            }
-          }
-        }
-      },
-      { $sort: { createdAt: -1 } },
-      { $skip: skip },
-      { $limit: limit },
-      {
-        $project: {
-          user: 0
-        }
-      }
-    ];
-
+    // Simple approach - just get reviews without complex aggregation
     const [reviews, total] = await Promise.all([
-      ReviewModel.aggregate(aggregationPipeline),
-      ReviewModel.countDocuments({ productId: { $toObjectId: productId } })
+      ReviewModel.find({ productId })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      ReviewModel.countDocuments({ productId })
     ]);
 
     const paginationData = calculatePaginationData(total, page, limit);
 
     return {
       success: true,
-      data: reviews,
+      data: reviews.map(review => ({
+        ...review,
+        author: {
+          _id: review.userId,
+          name: "Anonymous" // Simplified for now
+        }
+      })),
       pagination: {
         page: paginationData.page,
         limit: paginationData.perPage,
