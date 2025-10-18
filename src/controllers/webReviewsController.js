@@ -50,7 +50,7 @@ export const reactToReview = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { type } = req.body;
-    const userId = req.user?.id;
+    const userId = req.user; // Fixed: authMiddleware sets req.user directly
 
     if (!["like", "dislike"].includes(type)) {
       return res.status(400).json({ message: "Invalid reaction type" });
@@ -66,6 +66,12 @@ export const reactToReview = async (req, res, next) => {
       return res
         .status(400)
         .json({ message: `You already ${result.split(" ")[1]} this review.` });
+    }
+
+    if (result === "cannot like own review") {
+      return res
+        .status(400)
+        .json({ message: "You cannot like your own review." });
     }
 
     if (!result) {
