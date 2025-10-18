@@ -6,6 +6,7 @@ import {
   createReviewController,
   updateReviewController,
   deleteReviewController,
+  reactToReviewController,
 } from "../controllers/reviews.js";
 import { authMiddleware } from "../middlewares/authMiddleware.js";
 import { validateBody } from "../middlewares/validateBody.js";
@@ -25,5 +26,8 @@ router.patch("/:reviewId", authMiddleware, validateBody(updateReviewSchema), ctr
 
 // DELETE /api/reviews/:reviewId - Delete review (requires authentication)
 router.delete("/:reviewId", authMiddleware, ctrlWrapper(deleteReviewController));
+
+// PATCH /api/reviews/:reviewId/react - Like/dislike review (requires authentication)
+router.patch("/:reviewId/react", authMiddleware, ctrlWrapper(reactToReviewController));
 
 export default router;

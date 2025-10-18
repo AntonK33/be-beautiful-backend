@@ -149,3 +149,62 @@ export const deleteReview = async (reviewId, userId) => {
     throw new Error('Failed to delete review from database');
   }
 };
+
+export const updateReviewReaction = async (reviewId, type, userId) => {
+  if (!["like", "dislike"].includes(type)) return null;
+
+  try {
+    // First, get the review to check if user already reacted
+    const review = await ReviewModel.findById(reviewId);
+    if (!review) return null;
+
+    // Check if user is trying to like their own review
+    if (review.userId.toString() === userId.toString()) {
+      return "cannot like own review";
+    }
+
+    // Check if user already liked or disliked
+    const alreadyLiked = review.likedBy.includes(userId);
+    const alreadyDisliked = review.dislikedBy.includes(userId);
+
+    if (type === "like") {
+      if (alreadyLiked) return "already liked";
+      if (alreadyDisliked) {
+        // Remove from dislikes and add to likes
+        await ReviewModel.findByIdAndUpdate(reviewId, {
+          $pull: { dislikedBy: userId },
+          $push: { likedBy: userId },
+          $inc: { dislikes: -1, likes: 1 }
+        });
+      } else {
+        // Just add to likes
+        await ReviewModel.findByIdAndUpdate(reviewId, {
+          $push: { likedBy: userId },
+          $inc: { likes: 1 }
+        });
+      }
+    } else if (type === "dislike") {
+      if (alreadyDisliked) return "already disliked";
+      if (alreadyLiked) {
+        // Remove from likes and add to dislikes
+        await ReviewModel.findByIdAndUpdate(reviewId, {
+          $pull: { likedBy: userId },
+          $push: { dislikedBy: userId },
+          $inc: { likes: -1, dislikes: 1 }
+        });
+      } else {
+        // Just add to dislikes
+        await ReviewModel.findByIdAndUpdate(reviewId, {
+          $push: { dislikedBy: userId },
+          $inc: { dislikes: 1 }
+        });
+      }
+    }
+
+    // Return updated review
+    return await ReviewModel.findById(reviewId);
+  } catch (error) {
+    console.error('Database error in updateReviewReaction:', error);
+    throw new Error('Failed to update review reaction in database');
+  }
+};

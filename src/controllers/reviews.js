@@ -118,3 +118,43 @@ export const deleteReviewController = async (req, res, next) => {
     next(err);
   }
 };
+
+// PATCH /api/reviews/:reviewId/react - Like/dislike review (requires authentication)
+export const reactToReviewController = async (req, res, next) => {
+  try {
+    const { reviewId } = req.params;
+    const { type } = req.body;
+    const userId = req.user;
+
+    if (!["like", "dislike"].includes(type)) {
+      return next(createHttpError(400, "Invalid reaction type"));
+    }
+
+    if (!userId) {
+      return next(createHttpError(401, "Authentication required"));
+    }
+
+    const result = await reviewService.updateReviewReaction(reviewId, type, userId);
+
+    if (result === "already liked" || result === "already disliked") {
+      return next(createHttpError(400, `You already ${result.split(" ")[1]} this review.`));
+    }
+
+    if (result === "cannot like own review") {
+      return next(createHttpError(400, "You cannot like your own review."));
+    }
+
+    if (!result) {
+      return next(createHttpError(404, "Review not found"));
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Review ${type}d successfully`,
+      data: result,
+    });
+  } catch (err) {
+    console.error('Error in reactToReviewController:', err);
+    next(err);
+  }
+};
