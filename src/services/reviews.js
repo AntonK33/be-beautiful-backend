@@ -156,7 +156,10 @@ export const updateReviewReaction = async (reviewId, type, userId) => {
   try {
     // First, get the review to check if user already reacted
     const review = await ReviewModel.findById(reviewId);
-    if (!review) return null;
+    if (!review) {
+      console.error(`Review not found: ${reviewId}`);
+      return null;
+    }
 
     // Check if user is trying to like their own review
     if (review.userId.toString() === userId.toString()) {
