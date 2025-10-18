@@ -292,7 +292,7 @@
       }
     },
     "/auth/update-current-user": {
-      "post": {
+      "patch": {
         "tags": [
           "Auth"
         ],
@@ -1662,8 +1662,7 @@
           "deliveryMethod": {
             "type": "string",
             "enum": [
-              "pickup",
-              "delivery"
+              "nova_poshta"
             ]
           },
           "items": {
@@ -1702,8 +1701,7 @@
           "deliveryMethod": {
             "type": "string",
             "enum": [
-              "pickup",
-              "delivery"
+              "nova_poshta"
             ]
           },
           "items": {
@@ -1759,8 +1757,7 @@
           "deliveryMethod": {
             "type": "string",
             "enum": [
-              "pickup",
-              "delivery"
+              "nova_poshta"
             ]
           },
           "status": {

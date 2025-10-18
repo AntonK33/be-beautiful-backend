@@ -44,7 +44,7 @@ paths:
       $ref: '../swagger/paths/auth/current.yaml'
              
   /auth/update-current-user:
-    post: 
+    patch: 
       $ref: '../swagger/paths/auth/update-current-user.yaml'
         
   /auth/refresh:
