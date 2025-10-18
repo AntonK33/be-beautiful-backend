@@ -8,9 +8,15 @@ export const getAllReviewsController = async (req, res, next) => {
     const pageNum = parseInt(page);
     const limitNum = parseInt(limit);
 
+    // Validate pagination parameters
+    if (pageNum < 1 || limitNum < 1 || limitNum > 100) {
+      return next(createHttpError(400, "Invalid pagination parameters"));
+    }
+
     const result = await reviewService.getAllReviews(pageNum, limitNum);
     res.json(result);
   } catch (err) {
+    console.error('Error in getAllReviewsController:', err);
     next(err);
   }
 };
@@ -27,9 +33,15 @@ export const getProductReviewsController = async (req, res, next) => {
       return next(createHttpError(400, "Product ID is required"));
     }
 
+    // Validate pagination parameters
+    if (pageNum < 1 || limitNum < 1 || limitNum > 100) {
+      return next(createHttpError(400, "Invalid pagination parameters"));
+    }
+
     const result = await reviewService.getReviewsByProductId(productId, pageNum, limitNum);
     res.json(result);
   } catch (err) {
+    console.error('Error in getProductReviewsController:', err);
     next(err);
   }
 };
@@ -40,6 +52,10 @@ export const createReviewController = async (req, res, next) => {
     const { productId, rating, comment } = req.body;
     const userId = req.user;
 
+    if (!userId) {
+      return next(createHttpError(401, "Authentication required"));
+    }
+
     const result = await reviewService.createReview({
       userId,
       productId,
@@ -48,6 +64,7 @@ export const createReviewController = async (req, res, next) => {
     });
     res.status(201).json(result);
   } catch (err) {
+    console.error('Error in createReviewController:', err);
     if (err.code === 409) {
       return next(createHttpError(409, "You have already reviewed this product"));
     }
@@ -64,6 +81,10 @@ export const updateReviewController = async (req, res, next) => {
     const userId = req.user;
     const { reviewId } = req.params;
 
+    if (!userId) {
+      return next(createHttpError(401, "Authentication required"));
+    }
+
     const result = await reviewService.updateReview(reviewId, userId, req.body);
     if (!result) {
       return next(createHttpError(404, "Review not found or not authorized"));
@@ -71,6 +92,7 @@ export const updateReviewController = async (req, res, next) => {
 
     res.json(result);
   } catch (err) {
+    console.error('Error in updateReviewController:', err);
     next(err);
   }
 };
@@ -81,6 +103,10 @@ export const deleteReviewController = async (req, res, next) => {
     const userId = req.user;
     const { reviewId } = req.params;
 
+    if (!userId) {
+      return next(createHttpError(401, "Authentication required"));
+    }
+
     const deleted = await reviewService.deleteReview(reviewId, userId);
     if (!deleted) {
       return next(createHttpError(404, "Review not found or not authorized"));
@@ -88,6 +114,7 @@ export const deleteReviewController = async (req, res, next) => {
 
     res.status(204).send();
   } catch (err) {
+    console.error('Error in deleteReviewController:', err);
     next(err);
   }
 };
