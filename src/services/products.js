@@ -32,7 +32,8 @@ export const getProducts = async (filter = {}, page = 1, perPage = 10) => {
 };
 
 export const getProductById = async (id) => {
-  const product = await ProductModel.findById(id);
+  const product = await ProductModel.findById(id).lean();
+  console.log(product)
   return product;
 };
 

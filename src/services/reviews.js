@@ -1,22 +1,213 @@
 import { ReviewModel } from "../db/models/review.js";
+import { UsersCollection } from "../db/models/auth.js";
+import { calculatePaginationData } from "../utils/calculatePaginationData.js";
 
-export const getReviewsByProductId = async (productId) => {
-  return await ReviewModel.find({ productId }).populate("userId", "name");
+export const getAllReviews = async (page = 1, limit = 10) => {
+  try {
+    const skip = (page - 1) * limit;
+    
+    // Simple approach - just get reviews without population first
+    const [reviews, total] = await Promise.all([
+      ReviewModel.find()
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      ReviewModel.countDocuments()
+    ]);
+
+    const paginationData = calculatePaginationData(total, page, limit);
+
+    return {
+      success: true,
+      data: reviews.map(review => ({
+        ...review,
+        author: {
+          _id: review.userId,
+          name: "Anonymous" // Simplified for now
+        }
+      })),
+      pagination: {
+        page: paginationData.page,
+        limit: paginationData.perPage,
+        total: paginationData.totalItems,
+        pages: paginationData.totalPages
+      }
+    };
+  } catch (error) {
+    console.error('Database error in getAllReviews:', error);
+    throw new Error('Failed to fetch reviews from database');
+  }
+};
+
+export const getReviewsByProductId = async (productId, page = 1, limit = 10) => {
+  try {
+    const skip = (page - 1) * limit;
+    
+    // Simple approach - just get reviews without complex aggregation
+    const [reviews, total] = await Promise.all([
+      ReviewModel.find({ productId })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      ReviewModel.countDocuments({ productId })
+    ]);
+
+    const paginationData = calculatePaginationData(total, page, limit);
+
+    return {
+      success: true,
+      data: reviews.map(review => ({
+        ...review,
+        author: {
+          _id: review.userId,
+          name: "Anonymous" // Simplified for now
+        }
+      })),
+      pagination: {
+        page: paginationData.page,
+        limit: paginationData.perPage,
+        total: paginationData.totalItems,
+        pages: paginationData.totalPages
+      }
+    };
+  } catch (error) {
+    console.error('Database error in getReviewsByProductId:', error);
+    throw new Error('Failed to fetch product reviews from database');
+  }
 };
 
 export const createReview = async ({ userId, productId, rating, comment }) => {
-  return await ReviewModel.create({ userId, productId, rating, comment });
+  try {
+    // Check if user already reviewed this product
+    const existingReview = await ReviewModel.findOne({ userId, productId });
+    if (existingReview) {
+      const error = new Error("User has already reviewed this product");
+      error.code = 409;
+      throw error;
+    }
+
+    const review = await ReviewModel.create({ userId, productId, rating, comment });
+    
+    // Populate the created review
+    const populatedReview = await ReviewModel.findById(review._id)
+      .populate("userId", "first_name last_name")
+      .lean();
+
+    return {
+      success: true,
+      data: {
+        ...populatedReview,
+        author: {
+          _id: populatedReview.userId._id,
+          name: `${populatedReview.userId.first_name || ''} ${populatedReview.userId.last_name || ''}`.trim() || 'Anonymous'
+        }
+      }
+    };
+  } catch (error) {
+    console.error('Database error in createReview:', error);
+    if (error.code === 409) {
+      throw error; // Re-throw 409 errors
+    }
+    throw new Error('Failed to create review in database');
+  }
 };
 
 export const updateReview = async (reviewId, userId, payload) => {
-  return await ReviewModel.findOneAndUpdate(
-    { _id: reviewId, userId },
-    payload,
-    { new: true, runValidators: true }
-  );
+  try {
+    const review = await ReviewModel.findOneAndUpdate(
+      { _id: reviewId, userId },
+      payload,
+      { new: true, runValidators: true }
+    ).populate("userId", "first_name last_name").lean();
+
+    if (!review) return null;
+
+    return {
+      success: true,
+      data: {
+        ...review,
+        author: {
+          _id: review.userId._id,
+          name: `${review.userId.first_name || ''} ${review.userId.last_name || ''}`.trim() || 'Anonymous'
+        }
+      }
+    };
+  } catch (error) {
+    console.error('Database error in updateReview:', error);
+    throw new Error('Failed to update review in database');
+  }
 };
 
-export const deleteReview = async (reviewId, userId, isAdmin = false) => {
-  const filter = isAdmin ? { _id: reviewId } : { _id: reviewId, userId };
-  return await ReviewModel.findOneAndDelete(filter);
+export const deleteReview = async (reviewId, userId) => {
+  try {
+    const review = await ReviewModel.findOneAndDelete({ _id: reviewId, userId });
+    return !!review;
+  } catch (error) {
+    console.error('Database error in deleteReview:', error);
+    throw new Error('Failed to delete review from database');
+  }
+};
+
+export const updateReviewReaction = async (reviewId, type, userId) => {
+  if (!["like", "dislike"].includes(type)) return null;
+
+  try {
+    // First, get the review to check if user already reacted
+    const review = await ReviewModel.findById(reviewId);
+    if (!review) {
+      console.error(`Review not found: ${reviewId}`);
+      return null;
+    }
+
+    // Check if user is trying to like their own review
+    if (review.userId.toString() === userId.toString()) {
+      return "cannot like own review";
+    }
+
+    // Check if user already liked or disliked
+    const alreadyLiked = review.likedBy.includes(userId);
+    const alreadyDisliked = review.dislikedBy.includes(userId);
+
+    if (type === "like") {
+      if (alreadyLiked) return "already liked";
+      if (alreadyDisliked) {
+        // Remove from dislikes and add to likes
+        await ReviewModel.findByIdAndUpdate(reviewId, {
+          $pull: { dislikedBy: userId },
+          $push: { likedBy: userId },
+          $inc: { dislikes: -1, likes: 1 }
+        });
+      } else {
+        // Just add to likes
+        await ReviewModel.findByIdAndUpdate(reviewId, {
+          $push: { likedBy: userId },
+          $inc: { likes: 1 }
+        });
+      }
+    } else if (type === "dislike") {
+      if (alreadyDisliked) return "already disliked";
+      if (alreadyLiked) {
+        // Remove from likes and add to dislikes
+        await ReviewModel.findByIdAndUpdate(reviewId, {
+          $pull: { likedBy: userId },
+          $push: { dislikedBy: userId },
+          $inc: { likes: -1, dislikes: 1 }
+        });
+      } else {
+        // Just add to dislikes
+        await ReviewModel.findByIdAndUpdate(reviewId, {
+          $push: { dislikedBy: userId },
+          $inc: { dislikes: 1 }
+        });
+      }
+    }
+
+    // Return updated review
+    return await ReviewModel.findById(reviewId);
+  } catch (error) {
+    console.error('Database error in updateReviewReaction:', error);
+    throw new Error('Failed to update review reaction in database');
+  }
 };

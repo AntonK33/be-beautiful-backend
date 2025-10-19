@@ -71,4 +71,20 @@ const productSchema = new Schema(
   { timestamps: true, versionKey: false }
 );
 
+productSchema.pre("save", function (next) {
+  if (this.imageUrl && this.imageUrl.startsWith("http://")) {
+    this.imageUrl = this.imageUrl.replace("http://", "https://");
+  }
+  next();
+});
+
+productSchema.pre("findOneAndUpdate", function (next) {
+  const update = this.getUpdate();
+  if (update.imageUrl && update.imageUrl.startsWith("http://")) {
+    update.imageUrl = update.imageUrl.replace("http://", "https://");
+    this.setUpdate(update);
+  }
+  next();
+});
+  
 export const ProductModel = model("Product", productSchema);
