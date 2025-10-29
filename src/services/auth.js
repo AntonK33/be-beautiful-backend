@@ -119,20 +119,16 @@ export const getCurrentUser = async (userId) => {
   return user;
 };
 
-export const updateUser = async (userId, updateData, file) => {
-  if (file) {
-    // multer кладёт путь к файлу в file.path
-    updateData.avatarUrl = `/uploads/${file.filename}`;
-  }
+export const updateUser = async (filter, data) => {
+  // if (file) {
+  //   // multer кладёт путь к файлу в file.path
+  //   updateData.avatarUrl = `/uploads/${file.filename}`;
+  // }
 
-  const updatedUser = await UsersCollection.findByIdAndUpdate(
-    userId,
-    { ...updateData },
-    {
-      new: true,
-      runValidators: true,
-    }
-  );
+  const updatedUser = await UsersCollection.findByIdAndUpdate(filter, data, {
+    new: true,
+    runValidators: true,
+  });
 
   if (!updatedUser) {
     throw createHttpError(404, "User not found");

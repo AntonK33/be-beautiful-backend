@@ -6,15 +6,27 @@ import {
   registerUser,
   updateUser,
 } from "../services/auth.js";
+import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
+// import { getEnvVar } from '../utils/getEnvVar.js';
 
 export const registerController = async (req, res) => {
+ let photoUrl = null;
+
+if (req.file) {
+  // сохраняем файл в uploads и получаем HTTPS-путь
+  photoUrl = await saveFileToUploadDir(req.file);
+}
+
+
   const payload = {
-    name: req.body.name,
+    first_name: req.body.first_name,
+    last_name: req.body.last_name,
     language: req.body.language,
     role: req.body.role,
     email: req.body.email,
     password: req.body.password,
     agree: req.body.agree,
+    photo: photoUrl,
   };
 
   const session = await registerUser(payload, req);
@@ -78,11 +90,25 @@ export const getCurrentUserController = async (req, res) => {
 };
 
 export const updateCurrentUserController = async (req, res) => {
-  const updateData = req.body;
 
-  const file = req.file;
+const userId = req.user._id;
+  const photo = req.file;
+  let photoUrl;
 
-  const updatedUser = await updateUser(req.user, updateData, file);
+    if (photo) {
+     
+        photoUrl = await saveFileToUploadDir(photo);
+      
+  }
+
+  // const { id } = req.params;
+   const updatedUser = await updateUser(
+       userId,
+      { ...req.body, photo: photoUrl },
+    );
+  
+
+  // const updatedUser = await updateUser(req.user, updateData, file);
 
   res.status(200).json({
     status: 200,
