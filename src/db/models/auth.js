@@ -29,10 +29,8 @@ const userSchema = new Schema(
     //   type: String,
     //   default: null,
     // },
-    avatarUrl: {
-      type: String,
-      default: null,
-    },
+    photo: { type: String },
+    
     gender: {
       type: String,
       enum: ["woman", "man"],

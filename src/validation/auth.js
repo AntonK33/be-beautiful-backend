@@ -1,7 +1,8 @@
 import Joi from "joi";
 
 export const registerUserSchema = Joi.object({
-  name: Joi.string().required(),
+  first_name: Joi.string().required(),
+  last_name: Joi.string().required(),
   email: Joi.string()
     .email()
     .required()
@@ -36,9 +37,8 @@ export const loginUserSchema = Joi.object({
 });
 
 export const updateCurrentUserSchema = Joi.object({
-  name: Joi.string().allow("").messages({
-    "string.base": "Username should be a string",
-  }),
+  first_name: Joi.string(),
+  last_name: Joi.string(),
   email: Joi.string()
     .email()
     .pattern(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)
