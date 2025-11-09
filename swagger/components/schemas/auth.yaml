@@ -2,7 +2,7 @@ title: Auth
 type: object
 required:
   - agree
-  - name
+  - first_name
   - email
   - password
 properties:
@@ -10,8 +10,14 @@ properties:
     description: "User's agreement"
     type: string
     example: "true"
-  name:
-    description: "User's name"
+  first_name:
+    description: "User's firstname"
+    type: string
+    example: 'John Doe'
+    minLength: 3
+    maxLength: 20
+  last_name:
+    description: "User's lastname"
     type: string
     example: 'John Doe'
     minLength: 3
