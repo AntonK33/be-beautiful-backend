@@ -31,6 +31,12 @@ const userSchema = new Schema(
     // },
     photo: { type: String },
     
+    telephone: {
+      type: String,
+    },
+    dateOfBirth: {
+      type: String,
+    },
     gender: {
       type: String,
       enum: ["woman", "man"],

@@ -18,6 +18,8 @@ export const registerUserSchema = Joi.object({
   language: Joi.string().valid("en", "uk").optional(),
   role: Joi.string().valid("user", "admin").optional(),
   agree: Joi.string().required(),
+  dateOfBirth: Joi.string(),
+  telephone: Joi.string(),
 });
 
 export const loginUserSchema = Joi.object({
@@ -46,6 +48,8 @@ export const updateCurrentUserSchema = Joi.object({
       "string.pattern.base": "Please enter a valid email address",
       "any.required": "email is required",
     }),
+  dateOfBirth: Joi.string(),
+  telephone: Joi.string(),
   gender: Joi.string().valid("woman", "man"),
   // avatarUrlCloudinary: Joi.string(),
   // avatarUrlLocal: Joi.string(),

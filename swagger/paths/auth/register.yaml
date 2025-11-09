@@ -13,11 +13,20 @@ requestBody:
           - email
           - password
         properties:
-          name:
+          first_name:
             description: "User's name"
             type: string
-            example: 'John Doe'
+            example: 'John'
             minLength: 3
+          last_name:
+            description: "User's lastname"
+            type: string
+            example: 'Doe'
+            minLength: 3
+          dateOfBirth:
+            description: "User's dateOfBirth"
+            type: string
+            example: '18.01.1989'
           email:
             description: "User's email"
             maxLength: 64
@@ -29,6 +38,14 @@ requestBody:
             example: '12345678'
             minLength: 8
             maxLength: 64
+          photo:
+            description: "User's photo"
+            type: string
+            example: 'img_3567.jpeg'
+          telephone:
+            description: "User's phone number"
+            type: string
+            example: '0666679494'
           gender:
             description: "User's gender"
             type: string

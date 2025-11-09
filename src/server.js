@@ -15,7 +15,8 @@ import { swaggerConfig } from './middlewares/swaggerConfig.js';
 dotenv.config();
 
 export async function setupServer() {
-  const PORT = Number(process.env.PORT) || 3000;
+  const PORT = Number(process.env.APP_DOMAIN) || 3000;
+ 
   const app = express();
 
   const swagger = await swaggerConfig();
