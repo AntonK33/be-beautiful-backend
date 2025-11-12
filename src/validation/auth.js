@@ -2,7 +2,7 @@ import Joi from "joi";
 
 export const registerUserSchema = Joi.object({
   first_name: Joi.string().required(),
-  last_name: Joi.string().required(),
+  last_name: Joi.string(),
   email: Joi.string()
     .email()
     .required()
