@@ -82,16 +82,24 @@ export const deleteCertificateController = async (req, res, next) => {
 export const activateCertificateController = async (req, res, next) => {
     try {
         const { number } = req.params;
-        const { owner } = req.body;
+        const { owner } = req.body;        // client
+        const adminId = req.user.id;       //from activity
 
-        if (!owner) return res.status(400).json({ message: 'Owner is required' });
+        if (!owner) {
+            return res.status(400).json({ message: 'Owner is required' });
+        }
 
-        const activated = await certificateService.activateCertificate(number, owner);
+        const activated = await certificateService.activateCertificate(
+            number,
+            { owner, adminId }
+        );
+
         res.json(activated);
     } catch (error) {
         next(error);
     }
 };
+
 
 // ===================== SPEND =====================
 export const spendCertificateController = async (req, res, next) => {

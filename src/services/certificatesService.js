@@ -52,7 +52,7 @@ export const deleteCertificate = async (id) => {
 };
 
 // ===================== ACTIVATE CERTIFICATE =====================
-export const activateCertificate = async (number, userId) => {
+export const activateCertificate = async (number, { owner, adminId }) => {
     const certificate = await CertificateModel.findOne({ number });
     if (!certificate) throw createHttpError(404, 'Certificate not found');
 
@@ -60,20 +60,25 @@ export const activateCertificate = async (number, userId) => {
         throw createHttpError(400, 'Certificate is already active');
     }
 
+    if (!owner) {
+        throw createHttpError(400, 'Owner (client ID) is required');
+    }
+
     const now = new Date();
     const expiresAt = new Date(now);
     expiresAt.setMonth(now.getMonth() + 6);
 
     certificate.isActive = true;
-    certificate.owner = userId;
+    certificate.owner = owner;      // client
     certificate.activatedAt = now;
     certificate.expiresAt = expiresAt;
-    certificate.activatedBy = userId;
+    certificate.activatedBy = adminId;  // admin
 
     await certificate.save();
 
     return certificate;
 };
+
 
 // ===================== SPEND CERTIFICATE =====================
 export const spendCertificateAmount = async (number, amountToSpend) => {
