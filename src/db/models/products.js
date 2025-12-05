@@ -6,34 +6,33 @@ const productSchema = new Schema(
       en: { type: String, required: true },
       ua: { type: String, required: true },
     },
+
     sku: { type: String, default: "" },
-    volumeOptions: {
-      type: [Number],
-      required: true,
-    },
+
     priceByVolume: [
       {
-        volume: { type: Number, required: true },
-        price: { type: Number, required: true },
+        volume: { type: Number, required: true }, // мл
+        price: { type: Number, required: true },  // цена
+        stockQuantity: { type: Number, required: true, default: 0 },
       },
     ],
-    stockQuantity: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
+
+
     features: {
       en: { type: [String], required: true },
       ua: { type: [String], required: true },
     },
+
     description: {
       en: { type: String },
       ua: { type: String },
     },
+
     instructions: {
       en: { type: String },
       ua: { type: String },
     },
+
     activeIngredients: [
       {
         name: {
@@ -46,13 +45,16 @@ const productSchema = new Schema(
         },
       },
     ],
+
     inciList: [String],
+
     category: {
       type: String,
       enum: ["hair", "face", "body", "makeup", "home"],
       default: "hair",
       required: true,
     },
+
     reviews: {
       userId: { type: Schema.Types.ObjectId, ref: "users", required: true },
       productId: {
@@ -63,9 +65,12 @@ const productSchema = new Schema(
       rating: { type: Number, required: true, min: 1, max: 5 },
       comment: { type: String, maxlength: 1000 },
     },
+
     isVegan: { type: Boolean, default: false },
     isPromoted: { type: Boolean, default: false },
+
     imageUrl: String,
+
     inStock: { type: Boolean, default: true },
   },
   { timestamps: true, versionKey: false }
@@ -86,5 +91,5 @@ productSchema.pre("findOneAndUpdate", function (next) {
   }
   next();
 });
-  
+
 export const ProductModel = model("Product", productSchema);

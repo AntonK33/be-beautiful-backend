@@ -37,12 +37,12 @@ export const getCartItemController = async (req, res, next) => {
 // add one
 export const addCartItemController = async (req, res, next) => {
     try {
-        const { productId, quantity } = req.body;
+        const { productId, quantity, selectedVolume } = req.body;
         if (!productId || !quantity) {
             throw createHttpError(400, 'productId and quantity are required');
         }
         const userId = req.user._id;
-        const cart = await addInCart(userId, productId, quantity);
+        const cart = await addInCart(userId, productId, quantity, selectedVolume);
         res.status(201).json(cart);
     } catch (err) {
         next(err);
@@ -66,12 +66,12 @@ export const addCartItemsBulkController = async (req, res, next) => {
 // update one
 export const updateCartItemController = async (req, res, next) => {
     try {
-        const { quantity } = req.body;
+        const { quantity, selectedVolume } = req.body;
         if (!quantity || quantity < 1) throw createHttpError(400, '"quantity" must be at least 1');
 
         const { productId } = req.params;
         const userId = req.user._id;
-        const cart = await updateCartItem(userId, productId, quantity);
+        const cart = await updateCartItem(userId, productId, quantity, selectedVolume);
         res.json(cart);
     } catch (err) {
         next(err);

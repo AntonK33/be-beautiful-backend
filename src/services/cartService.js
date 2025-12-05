@@ -19,7 +19,7 @@ export const getCartItem = async (userId, productId) => {
 };
 
 // addInCart
-export const addInCart = async (userId, productId, quantity) => {
+export const addInCart = async (userId, productId, quantity, selectedVolume) => {
     const product = await ProductModel.findById(productId);
     if (!product) throw createHttpError(404, 'Product not found');
 
@@ -27,36 +27,58 @@ export const addInCart = async (userId, productId, quantity) => {
 
     const existingItem = cart ? cart.items.find(i => i.productId.equals(productId)) : null;
     const newQuantity = existingItem ? existingItem.quantity + quantity : quantity;
-    if (newQuantity > product.stockQuantity) {
-        throw createHttpError(400, 'Not enough stock');
+
+    const variant = product.priceByVolume.find(v => v.volume === selectedVolume);
+    if (!variant) throw createHttpError(400, "Volume not found");
+
+    if (newQuantity > variant.stockQuantity) {
+        throw createHttpError(400, "Not enough stock for this volume");
     }
 
     if (!cart) {
-        cart = await CartModel.create({ userId, items: [{ productId, quantity }] });
-    } else {
-        if (existingItem) {
-            existingItem.quantity = newQuantity;
-        } else {
-            cart.items.push({ productId, quantity });
-        }
-        await cart.save();
+        cart = await CartModel.create({
+            userId,
+            items: [{ productId, quantity, selectedVolume }],
+        });
+
+        return cart;
     }
-    return cart;
+
+    if (existingItem) {
+        existingItem.quantity = newQuantity;
+
+        if (selectedVolume !== undefined) {
+            existingItem.selectedVolume = selectedVolume;
+        }
+    } else {
+
+        cart.items.push({ productId, quantity, selectedVolume });
+    }
+
+    await cart.save();
+    return getCart(userId);
 };
+
 
 // addInCartBulk
 export const addInCartBulk = async (userId, items) => {
-    for (const { productId, quantity } of items) {
-        await addInCart(userId, productId, quantity);
+    for (const { productId, quantity, selectedVolume } of items) {
+        await addInCart(userId, productId, quantity, selectedVolume);
     }
     return getCart(userId);
 };
 
 // updateCartItem
-export const updateCartItem = async (userId, productId, quantity) => {
+export const updateCartItem = async (userId, productId, quantity, selectedVolume) => {
     const product = await ProductModel.findById(productId);
     if (!product) throw createHttpError(404, 'Product not found');
-    if (quantity > product.stockQuantity) throw createHttpError(400, 'Not enough stock');
+
+    const variant = product.priceByVolume.find(v => v.volume === selectedVolume);
+    if (!variant) throw createHttpError(400, "Volume not found");
+
+    if (quantity > variant.stockQuantity) {
+        throw createHttpError(400, "Not enough stock for this volume");
+    }
 
     const cart = await CartModel.findOne({ userId });
     if (!cart) throw createHttpError(404, 'Cart not found');
@@ -65,17 +87,22 @@ export const updateCartItem = async (userId, productId, quantity) => {
     if (!item) throw createHttpError(404, 'Product not in cart');
 
     item.quantity = quantity;
+
+    if (selectedVolume !== undefined) {
+        item.selectedVolume = selectedVolume;
+    }
+
     await cart.save();
 
-    //return actuality cart 
+
     return getCart(userId);
 };
 
 
 // updateCartItemsBulk
 export const updateCartItemsBulk = async (userId, items) => {
-    for (const { productId, quantity } of items) {
-        await updateCartItem(userId, productId, quantity);
+    for (const { productId, quantity, selectedVolume } of items) {
+        await updateCartItem(userId, productId, quantity, selectedVolume);
     }
 
     return getCart(userId);
@@ -87,7 +114,7 @@ export const deleteCartItem = async (userId, productId) => {
     const cart = await CartModel.findOne({ userId });
     if (!cart) throw createHttpError(404, 'Cart not found');
 
-    cart.items = cart.items.filter(i => !i.productId.equals(productId));
+    cart.items = cart.items.filter(i => String(i.productId) !== String(productId));
     await cart.save();
     return cart;
 };
