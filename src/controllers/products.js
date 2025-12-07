@@ -4,6 +4,7 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
+  getHomeProducts
 } from "../services/products.js";
 import createHttpError from "http-errors";
 
@@ -93,6 +94,23 @@ export const getProductsController = async (req, res, next) => {
     next(error);
   }
 };
+export const getHomeProductsController = async (req, res, next) => {
+  try {
+    const limit = Number(req.query.limit) || 4; 
+    const categories = ["face", "hair", "body", "makeup", "home"];
+
+    const data = await getHomeProducts(categories, limit);
+
+    res.status(200).json({
+      status: 200,
+      message: "Successfully loaded home page products",
+      data,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 export const getProductByIdController = async (req, res, next) => {
   const { productId } = req.params;
