@@ -30,6 +30,28 @@ export const getProducts = async (filter = {}, page = 1, perPage = 10) => {
     totalPages: Math.ceil(totalCount / perPage),
   };
 };
+export const getHomeProducts = async (categories, limit) => {
+  const facet = {};
+
+  for (const category of categories) {
+    facet[category] = [
+      { $match: { category } },
+      { $sample: { size: limit } },
+      {
+        $lookup: {
+          from: "reviews",
+          localField: "_id",
+          foreignField: "productId",
+          as: "reviews",
+        },
+      },
+    ];
+  }
+
+  const result = await ProductModel.aggregate([{ $facet: facet }]);
+
+  return result[0];
+};
 
 export const getProductById = async (id) => {
   const product = await ProductModel.findById(id).lean();

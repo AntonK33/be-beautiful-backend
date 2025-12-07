@@ -1025,6 +1025,37 @@
         }
       }
     },
+    "/products/home": {
+      "get": {
+        "tags": [
+          "Products"
+        ],
+        "summary": "Get products for homepage",
+        "operationId": "getHomeProductsController",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "List of all products",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Product"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No products found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
     "/products/{productId}": {
       "get": {
         "tags": [

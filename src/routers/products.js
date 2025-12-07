@@ -6,6 +6,7 @@ import {
   createProductController,
   deleteProductController,
   patchProductController,
+  getHomeProductsController
 } from "../controllers/products.js";
 import { getProductReviewsController } from "../controllers/reviews.js";
 import { ctrlWrapper } from "../utils/ctrlWrapper.js";
@@ -18,7 +19,7 @@ import {
 const router = Router();
 
 router.get("/", ctrlWrapper(getProductsController));
-
+router.get("/home", ctrlWrapper(getHomeProductsController));
 // GET /api/products/:productId/reviews - Get reviews for specific product (MUST be before /:productId)
 router.get("/:productId/reviews", ctrlWrapper(getProductReviewsController));
 
