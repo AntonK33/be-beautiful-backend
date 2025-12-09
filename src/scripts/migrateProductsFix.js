@@ -16,7 +16,6 @@ const migrateProductsFix = async () => {
             let changed = false;
             const doc = product.toObject();
 
-            // --- Исправляем product.name ---
             if (!doc.name || typeof doc.name === 'string') {
                 const oldName = typeof doc.name === 'string' ? doc.name : '';
                 doc.name = { en: oldName || 'Default Name EN', ua: oldName || 'Default Name UA' };
@@ -32,7 +31,6 @@ const migrateProductsFix = async () => {
                 }
             }
 
-            // --- Исправляем priceByVolume ---
             if (!doc.priceByVolume || doc.priceByVolume.length === 0) {
                 doc.priceByVolume = [
                     { volume: 250, price: 100, stockQuantity: 100 },
@@ -49,7 +47,6 @@ const migrateProductsFix = async () => {
                 });
             }
 
-            // --- Исправляем активные ингредиенты ---
             if (doc.activeIngredients?.length) {
                 doc.activeIngredients = doc.activeIngredients.map((ing, idx) => {
                     if (!ing.name || typeof ing.name === 'string') {
@@ -77,7 +74,7 @@ const migrateProductsFix = async () => {
             }
 
             if (changed) {
-                // Перезаписываем весь документ через overwrite
+
                 await ProductModel.updateOne({ _id: product._id }, doc);
                 modifiedCount++;
             }

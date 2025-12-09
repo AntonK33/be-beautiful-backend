@@ -13,21 +13,19 @@ const cartItemSchema = new Schema({
         min: [1, 'Quantity must be at least 1'],
     },
 
-    selectedVolume: {
-        type: Number,
+    selectedVariantId: {
+        type: Types.ObjectId,
+        ref: 'Product.priceByVolume',
         required: true,
     },
 });
 
+cartItemSchema.virtual("selectedVariant").get(function () {
+    if (!this.productId || !this.selectedVariantId) return null;
 
-cartItemSchema.virtual("selectedPrice").get(function () {
-    if (!this.productId || !this.selectedVolume) return null;
-
-    const variant = this.productId.priceByVolume.find(
-        v => v.volume === this.selectedVolume
+    return this.productId.priceByVolume.find(
+        v => v._id.equals(this.selectedVariantId)
     );
-
-    return variant ? variant.price : null;
 });
 
 cartItemSchema.set("toJSON", { virtuals: true });
@@ -45,7 +43,6 @@ const cartSchema = new Schema(
             type: [cartItemSchema],
             default: [],
         },
-
     },
     { timestamps: true }
 );

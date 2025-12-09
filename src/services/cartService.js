@@ -23,36 +23,38 @@ export const addInCart = async (userId, productId, quantity, selectedVolume) => 
     const product = await ProductModel.findById(productId);
     if (!product) throw createHttpError(404, 'Product not found');
 
+    const variant = product.priceByVolume.find(v => v.volume === selectedVolume);
+    if (!variant) throw createHttpError(400, "Volume not found");
+
     let cart = await CartModel.findOne({ userId });
 
     const existingItem = cart ? cart.items.find(i => i.productId.equals(productId)) : null;
     const newQuantity = existingItem ? existingItem.quantity + quantity : quantity;
-
-    const variant = product.priceByVolume.find(v => v.volume === selectedVolume);
-    if (!variant) throw createHttpError(400, "Volume not found");
 
     if (newQuantity > variant.stockQuantity) {
         throw createHttpError(400, "Not enough stock for this volume");
     }
 
     if (!cart) {
-        cart = await CartModel.create({
+        return CartModel.create({
             userId,
-            items: [{ productId, quantity, selectedVolume }],
+            items: [{
+                productId,
+                quantity,
+                selectedVariantId: variant._id,
+            }],
         });
-
-        return cart;
     }
 
     if (existingItem) {
         existingItem.quantity = newQuantity;
-
-        if (selectedVolume !== undefined) {
-            existingItem.selectedVolume = selectedVolume;
-        }
+        existingItem.selectedVariantId = variant._id;
     } else {
-
-        cart.items.push({ productId, quantity, selectedVolume });
+        cart.items.push({
+            productId,
+            quantity,
+            selectedVariantId: variant._id,
+        });
     }
 
     await cart.save();
@@ -87,14 +89,9 @@ export const updateCartItem = async (userId, productId, quantity, selectedVolume
     if (!item) throw createHttpError(404, 'Product not in cart');
 
     item.quantity = quantity;
-
-    if (selectedVolume !== undefined) {
-        item.selectedVolume = selectedVolume;
-    }
+    item.selectedVariantId = variant._id;
 
     await cart.save();
-
-
     return getCart(userId);
 };
 
