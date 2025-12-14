@@ -15,6 +15,7 @@ import {
   createProductSchema,
   updateProductSchema,
 } from "../validation/products.js";
+import { upload } from "../middlewares/multer.js";
 
 const router = Router();
 
@@ -27,6 +28,7 @@ router.get("/:productId", ctrlWrapper(getProductByIdController));
 
 router.post(
   "/",
+  upload.single("imageUrl"),
   ctrlWrapper(createProductController),
   validateBody(createProductSchema)
 );
