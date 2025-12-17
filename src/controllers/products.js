@@ -130,43 +130,7 @@ export const getProductByIdController = async (req, res, next) => {
   });
 };
 
-// export const createProductController = async (req, res) => {
-//   const imageUrl = req.file;
 
-//   let photoUrl;
-
-//   if (imageUrl) {
-//     if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
-//       photoUrl = await saveFileToCloudinary(imageUrl);
-//     } else {
-//       photoUrl = await saveFileToUploadDir(imageUrl);
-//     }
-//   }
-
-//   const body = {
-//   ...req.body,
-//   volumeOptions: JSON.parse(req.body.volumeOptions),
-//   priceByVolume: JSON.parse(req.body.priceByVolume),
-//   features: JSON.parse(req.body.features),
-//   description: JSON.parse(req.body.description),
-//   instructions: JSON.parse(req.body.instructions),
-//   activeIngredients: JSON.parse(req.body.activeIngredients),
-//   inciList: JSON.parse(req.body.inciList),
-//   isVegan: req.body.isVegan === 'true',
-//   isPromoted: req.body.isPromoted === 'true',
-//   inStock: req.body.inStock === 'true',
-//   stockQuantity: Number(req.body.stockQuantity),
-//    ...(photoUrl && { imageUrl: photoUrl }),
-// };
-
-//   const product = await createProduct(body);
-  
-//   res.status(201).json({
-//     status: 201,
-//     message: "Successfully created a product!",
-//     data: product,
-//   });
-// };
 export const createProductController = async (req, res, next) => {
   try {
     const file = req.file;
@@ -205,7 +169,7 @@ export const createProductController = async (req, res, next) => {
       stockQuantity: Number(req.body.stockQuantity),
       ...(photoUrl && { imageUrl: photoUrl }),
     };
-    console.log(body)
+    
     const product = await createProduct(body);
 
     res.status(201).json({
@@ -221,7 +185,43 @@ export const createProductController = async (req, res, next) => {
 
 export const patchProductController = async (req, res, next) => {
   const { productId } = req.params;
-  const result = await updateProduct(productId, req.body);
+  const file = req.file;
+    let photoUrl;
+
+    if (file) {
+      if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
+        photoUrl = await saveFileToCloudinary(file);
+      } else {
+        photoUrl = await saveFileToUploadDir(file);
+      }
+    }
+
+    const safeParse = (value) => {
+      try {
+        return JSON.parse(value);
+      } catch {
+        return value;
+      }
+    };
+
+    const body = {
+      ...req.body,
+      name: safeParse(req.body.name),
+      sku: safeParse(req.body.sku),
+      volumeOptions: safeParse(req.body.volumeOptions),
+      priceByVolume: safeParse(req.body.priceByVolume),
+      features: safeParse(req.body.features),
+      description: safeParse(req.body.description),
+      instructions: safeParse(req.body.instructions),
+      activeIngredients: safeParse(req.body.activeIngredients),
+      inciList: safeParse(req.body.inciList),
+      isVegan: req.body.isVegan === 'true',
+      isPromoted: req.body.isPromoted === 'true',
+      inStock: req.body.inStock === 'true',
+      stockQuantity: Number(req.body.stockQuantity),
+      ...(photoUrl && { imageUrl: photoUrl }),
+    };
+  const result = await updateProduct(productId, body);
 
   if (!result) {
     return next(createHttpError(404, "Product not found"));
