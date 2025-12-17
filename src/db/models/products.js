@@ -3,8 +3,8 @@ import { Schema, model } from "mongoose";
 const productSchema = new Schema(
   {
     name: {
-      en: { type: String, },
-      ua: { type: String,  },
+      en: { type: String, required: true},
+      ua: { type: String, required: true},
     },
     sku: { type: String, default: "" },
     volumeOptions: {

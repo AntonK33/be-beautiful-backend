@@ -190,6 +190,8 @@ export const createProductController = async (req, res, next) => {
 
     const body = {
       ...req.body,
+      name: safeParse(req.body.name),
+      sku: safeParse(req.body.sku),
       volumeOptions: safeParse(req.body.volumeOptions),
       priceByVolume: safeParse(req.body.priceByVolume),
       features: safeParse(req.body.features),
@@ -203,7 +205,7 @@ export const createProductController = async (req, res, next) => {
       stockQuantity: Number(req.body.stockQuantity),
       ...(photoUrl && { imageUrl: photoUrl }),
     };
-
+    console.log(body)
     const product = await createProduct(body);
 
     res.status(201).json({
