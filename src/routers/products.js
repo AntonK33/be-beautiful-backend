@@ -15,24 +15,25 @@ import {
   createProductSchema,
   updateProductSchema,
 } from "../validation/products.js";
+import { upload } from "../middlewares/multer.js";
 
 const router = Router();
 
 router.get("/", ctrlWrapper(getProductsController));
 router.get("/home", ctrlWrapper(getHomeProductsController));
-// GET /api/products/:productId/reviews - Get reviews for specific product (MUST be before /:productId)
 router.get("/:productId/reviews", ctrlWrapper(getProductReviewsController));
-
 router.get("/:productId", ctrlWrapper(getProductByIdController));
 
 router.post(
   "/",
+  upload.single("imageUrl"),
   ctrlWrapper(createProductController),
   validateBody(createProductSchema)
 );
 
 router.patch(
   "/:productId",
+  upload.single("imageUrl"),
   ctrlWrapper(patchProductController),
   validateBody(updateProductSchema)
 );
