@@ -6,6 +6,7 @@ export const cartItemsSchema = Joi.object({
             Joi.object({
                 productId: Joi.string().required(),
                 quantity: Joi.number().integer().min(1).required(),
+                selectedVolume: Joi.number().required(),
             })
         )
         .min(1)

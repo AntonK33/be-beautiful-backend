@@ -18,6 +18,7 @@ export const getCartItem = async (userId, productId) => {
     return item;
 };
 
+
 // addInCart
 export const addInCart = async (userId, productId, quantity, selectedVolume) => {
     const product = await ProductModel.findById(productId);
@@ -28,7 +29,7 @@ export const addInCart = async (userId, productId, quantity, selectedVolume) => 
 
     let cart = await CartModel.findOne({ userId });
 
-    const existingItem = cart ? cart.items.find(i => i.productId.equals(productId)) : null;
+    const existingItem = cart ? cart.items.find(i => i.productId.equals(productId) && i.selectedVariantId.equals(variant._id)) : null;
     const newQuantity = existingItem ? existingItem.quantity + quantity : quantity;
 
     if (newQuantity > variant.stockQuantity) {
@@ -48,7 +49,6 @@ export const addInCart = async (userId, productId, quantity, selectedVolume) => 
 
     if (existingItem) {
         existingItem.quantity = newQuantity;
-        existingItem.selectedVariantId = variant._id;
     } else {
         cart.items.push({
             productId,
@@ -70,6 +70,7 @@ export const addInCartBulk = async (userId, items) => {
     return getCart(userId);
 };
 
+
 // updateCartItem
 export const updateCartItem = async (userId, productId, quantity, selectedVolume) => {
     const product = await ProductModel.findById(productId);
@@ -85,7 +86,7 @@ export const updateCartItem = async (userId, productId, quantity, selectedVolume
     const cart = await CartModel.findOne({ userId });
     if (!cart) throw createHttpError(404, 'Cart not found');
 
-    const item = cart.items.find(i => i.productId.equals(productId));
+    let item = cart.items.find(i => i.productId.equals(productId));
     if (!item) throw createHttpError(404, 'Product not in cart');
 
     item.quantity = quantity;
@@ -96,14 +97,15 @@ export const updateCartItem = async (userId, productId, quantity, selectedVolume
 };
 
 
+
 // updateCartItemsBulk
 export const updateCartItemsBulk = async (userId, items) => {
     for (const { productId, quantity, selectedVolume } of items) {
         await updateCartItem(userId, productId, quantity, selectedVolume);
     }
-
     return getCart(userId);
 };
+
 
 
 // deleteCartItem
@@ -111,10 +113,11 @@ export const deleteCartItem = async (userId, productId) => {
     const cart = await CartModel.findOne({ userId });
     if (!cart) throw createHttpError(404, 'Cart not found');
 
-    cart.items = cart.items.filter(i => String(i.productId) !== String(productId));
+    cart.items = cart.items.filter(i => !i.productId.equals(productId));
     await cart.save();
-    return cart;
+    return getCart(userId);
 };
+
 
 // clearCart
 export const clearCart = async (userId) => {
@@ -123,5 +126,6 @@ export const clearCart = async (userId) => {
 
     cart.items = [];
     await cart.save();
-    return cart;
+    return getCart(userId);
 };
+
