@@ -120,10 +120,6 @@ export const getCurrentUser = async (userId) => {
 };
 
 export const updateUser = async (filter, data) => {
-  // if (file) {
-  //   // multer кладёт путь к файлу в file.path
-  //   updateData.avatarUrl = `/uploads/${file.filename}`;
-  // }
 
   const updatedUser = await UsersCollection.findByIdAndUpdate(filter, data, {
     new: true,
