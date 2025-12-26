@@ -3,27 +3,24 @@ import { Schema, model } from "mongoose";
 const productSchema = new Schema(
   {
     name: {
-      en: { type: String, required: true },
+      en: { type: String },
       ua: { type: String, required: true },
     },
     sku: { type: String, default: "" },
     volumeOptions: {
-      type: [Number],
+      type: [String],
       required: true,
     },
     priceByVolume: [
       {
         volume: { type: Number, required: true },
         price: { type: Number, required: true },
+        stockQuantity: { type: Number, required: true, default: 0},
       },
     ],
-    stockQuantity: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
+   
     features: {
-      en: { type: [String], required: true },
+      en: { type: [String]},
       ua: { type: [String], required: true },
     },
     description: {
@@ -37,7 +34,7 @@ const productSchema = new Schema(
     activeIngredients: [
       {
         name: {
-          en: { type: String, required: true },
+          en: { type: String },
           ua: { type: String, required: true },
         },
         description: {
