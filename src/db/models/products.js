@@ -3,23 +3,25 @@ import { Schema, model } from "mongoose";
 const productSchema = new Schema(
   {
     name: {
-      en: { type: String, required: true },
+      en: { type: String },
       ua: { type: String, required: true },
     },
 
     sku: { type: String, default: "" },
-
+    volumeOptions: {
+      type: [String],
+      required: true,
+    },
     priceByVolume: [
       {
-        volume: { type: Number, required: true }, // мл
-        price: { type: Number, required: true },  // цена
-        stockQuantity: { type: Number, required: true, default: 0 },
+        volume: { type: Number, required: true },
+        price: { type: Number, required: true },
+        stockQuantity: { type: Number, required: true, default: 0},
       },
     ],
-
-
+   
     features: {
-      en: { type: [String], required: true },
+      en: { type: [String]},
       ua: { type: [String], required: true },
     },
 
@@ -36,7 +38,7 @@ const productSchema = new Schema(
     activeIngredients: [
       {
         name: {
-          en: { type: String, required: true },
+          en: { type: String },
           ua: { type: String, required: true },
         },
         description: {
@@ -54,18 +56,16 @@ const productSchema = new Schema(
       default: "hair",
       required: true,
     },
-
-    reviews: {
-      userId: { type: Schema.Types.ObjectId, ref: "users", required: true },
-      productId: {
-        type: Schema.Types.ObjectId,
-        ref: "products",
-        required: true,
-      },
-      rating: { type: Number, required: true, min: 1, max: 5 },
-      comment: { type: String, maxlength: 1000 },
-    },
-
+    // reviews: {
+    //   userId: { type: Schema.Types.ObjectId, ref: "users", required: true },
+    //   productId: {
+    //     type: Schema.Types.ObjectId,
+    //     ref: "products",
+    //     required: true,
+    //   },
+    //   rating: { type: Number, required: true, min: 1, max: 5 },
+    //   comment: { type: String, maxlength: 1000 },
+    // },
     isVegan: { type: Boolean, default: false },
     isPromoted: { type: Boolean, default: false },
 

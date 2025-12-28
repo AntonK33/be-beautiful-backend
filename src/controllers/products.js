@@ -4,8 +4,12 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
+  getHomeProducts
 } from "../services/products.js";
 import createHttpError from "http-errors";
+import { saveFileToCloudinary } from '../utils/saveFileToCloudinary.js';
+import { getEnvVar } from '../utils/getEnvVar.js';
+import { saveFileToUploadDir } from "../utils/saveFileToUploadDir.js";
 
 export const getProductsController = async (req, res, next) => {
   try {
@@ -83,7 +87,7 @@ export const getProductsController = async (req, res, next) => {
       message: "Successfully found products!",
       data: result.products,
       pagination: {
-        total: result.total,
+        total: result.total, 
         page: result.page,
         perPage: result.perPage,
         totalPages: result.totalPages,
@@ -93,6 +97,23 @@ export const getProductsController = async (req, res, next) => {
     next(error);
   }
 };
+export const getHomeProductsController = async (req, res, next) => {
+  try {
+    const limit = Number(req.query.limit) || 4; 
+    const categories = ["face", "hair", "body", "makeup", "home"];
+
+    const data = await getHomeProducts(categories, limit);
+
+    res.status(200).json({
+      status: 200,
+      message: "Successfully loaded home page products",
+      data,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 export const getProductByIdController = async (req, res, next) => {
   const { productId } = req.params;
@@ -109,19 +130,98 @@ export const getProductByIdController = async (req, res, next) => {
   });
 };
 
-export const createProductController = async (req, res) => {
-  const product = await createProduct(req.body);
 
-  res.status(201).json({
-    status: 201,
-    message: "Successfully created a product!",
-    data: product,
-  });
+export const createProductController = async (req, res, next) => {
+  try {
+    const file = req.file;
+    let photoUrl;
+
+    if (file) {
+      if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
+        photoUrl = await saveFileToCloudinary(file);
+      } else {
+        photoUrl = await saveFileToUploadDir(file);
+      }
+    }
+
+    const safeParse = (value) => {
+      try {
+        return JSON.parse(value);
+      } catch {
+        return value;
+      }
+    };
+
+    const body = {
+      ...req.body,
+      name: safeParse(req.body.name),
+      sku: safeParse(req.body.sku),
+      volumeOptions: safeParse(req.body.volumeOptions),
+      priceByVolume: safeParse(req.body.priceByVolume),
+      features: safeParse(req.body.features),
+      description: safeParse(req.body.description),
+      instructions: safeParse(req.body.instructions),
+      activeIngredients: safeParse(req.body.activeIngredients),
+      inciList: safeParse(req.body.inciList),
+      isVegan: req.body.isVegan === 'true',
+      isPromoted: req.body.isPromoted === 'true',
+      inStock: req.body.inStock === 'true',
+      stockQuantity: Number(req.body.stockQuantity),
+      ...(photoUrl && { imageUrl: photoUrl }),
+    };
+    
+    const product = await createProduct(body);
+
+    res.status(201).json({
+      status: 201,
+      message: "Successfully created a product!",
+      data: product,
+    });
+  } catch (err) {
+    console.error("Create Product Error:", err); // <-- добавляем полный лог ошибки
+    next(err);
+  }
 };
 
 export const patchProductController = async (req, res, next) => {
   const { productId } = req.params;
-  const result = await updateProduct(productId, req.body);
+  const file = req.file;
+    let photoUrl;
+
+    if (file) {
+      if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
+        photoUrl = await saveFileToCloudinary(file);
+      } else {
+        photoUrl = await saveFileToUploadDir(file);
+      }
+    }
+
+    const safeParse = (value) => {
+      try {
+        return JSON.parse(value);
+      } catch {
+        return value;
+      }
+    };
+
+    const body = {
+      ...req.body,
+      name: safeParse(req.body.name),
+      sku: safeParse(req.body.sku),
+      volumeOptions: safeParse(req.body.volumeOptions),
+      priceByVolume: safeParse(req.body.priceByVolume),
+      features: safeParse(req.body.features),
+      description: safeParse(req.body.description),
+      instructions: safeParse(req.body.instructions),
+      activeIngredients: safeParse(req.body.activeIngredients),
+      inciList: safeParse(req.body.inciList),
+      isVegan: req.body.isVegan === 'true',
+      isPromoted: req.body.isPromoted === 'true',
+      inStock: req.body.inStock === 'true',
+      stockQuantity: Number(req.body.stockQuantity),
+      ...(photoUrl && { imageUrl: photoUrl }),
+    };
+  const result = await updateProduct(productId, body);
 
   if (!result) {
     return next(createHttpError(404, "Product not found"));

@@ -6,17 +6,23 @@ import {
   registerUser,
   updateUser,
 } from "../services/auth.js";
+import { getEnvVar } from "../utils/getEnvVar.js";
+import { saveFileToCloudinary } from "../utils/saveFileToCloudinary.js";
 import { saveFileToUploadDir } from '../utils/saveFileToUploadDir.js';
-// import { getEnvVar } from '../utils/getEnvVar.js';
+
 
 export const registerController = async (req, res) => {
  let photoUrl = null;
+  const file = req.file;
+  
 
-if (req.file) {
-  // сохраняем файл в uploads и получаем HTTPS-путь
-  photoUrl = await saveFileToUploadDir(req.file);
-}
-
+if (file) {
+      if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
+        photoUrl = await saveFileToCloudinary(file);
+      } else {
+        photoUrl = await saveFileToUploadDir(file);
+      }
+    }
 
   const payload = {
     first_name: req.body.first_name,
@@ -28,6 +34,7 @@ if (req.file) {
     agree: req.body.agree,
     photo: photoUrl,
   };
+
 
   const session = await registerUser(payload, req);
 
@@ -92,23 +99,27 @@ export const getCurrentUserController = async (req, res) => {
 export const updateCurrentUserController = async (req, res) => {
 
 const userId = req.user._id;
-  const photo = req.file;
+  const file = req.file;
   let photoUrl;
 
-    if (photo) {
-     
-        photoUrl = await saveFileToUploadDir(photo);
-      
-  }
+  
 
-  // const { id } = req.params;
+  if (file) {
+      if (getEnvVar('ENABLE_CLOUDINARY') === 'true') {
+        photoUrl = await saveFileToCloudinary(file);
+      } else {
+        photoUrl = await saveFileToUploadDir(file);
+      }
+    }
+
+  
    const updatedUser = await updateUser(
        userId,
       { ...req.body, photo: photoUrl },
     );
   
 
-  // const updatedUser = await updateUser(req.user, updateData, file);
+  
 
   res.status(200).json({
     status: 200,
