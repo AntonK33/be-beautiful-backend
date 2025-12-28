@@ -60,8 +60,11 @@ export const getProductsController = async (req, res, next) => {
     }
 
     if (keyword) {
-      filter.name = { $regex: keyword, $options: "i" };
-    }
+  filter.$or = [
+    { "name.ua": { $regex: keyword, $options: "i" } },
+    { "name.en": { $regex: keyword, $options: "i" } }
+  ];
+}
 
     const pagination = {
       page: Number(page),
