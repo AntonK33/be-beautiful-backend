@@ -6,6 +6,7 @@ const productSchema = new Schema(
       en: { type: String },
       ua: { type: String, required: true },
     },
+
     sku: { type: String, default: "" },
     volumeOptions: {
       type: [String],
@@ -23,14 +24,17 @@ const productSchema = new Schema(
       en: { type: [String]},
       ua: { type: [String], required: true },
     },
+
     description: {
       en: { type: String },
       ua: { type: String },
     },
+
     instructions: {
       en: { type: String },
       ua: { type: String },
     },
+
     activeIngredients: [
       {
         name: {
@@ -43,7 +47,9 @@ const productSchema = new Schema(
         },
       },
     ],
+
     inciList: [String],
+
     category: {
       type: String,
       enum: ["hair", "face", "body", "makeup", "home"],
@@ -62,7 +68,9 @@ const productSchema = new Schema(
     // },
     isVegan: { type: Boolean, default: false },
     isPromoted: { type: Boolean, default: false },
+
     imageUrl: String,
+
     inStock: { type: Boolean, default: true },
   },
   { timestamps: true, versionKey: false }
@@ -83,5 +91,5 @@ productSchema.pre("findOneAndUpdate", function (next) {
   }
   next();
 });
-  
+
 export const ProductModel = model("Product", productSchema);
