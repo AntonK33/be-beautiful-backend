@@ -55,16 +55,18 @@ const productSchema = new Schema(
       required: true,
     },
 
-    reviews: {
-      userId: { type: Schema.Types.ObjectId, ref: "users", required: true },
-      productId: {
-        type: Schema.Types.ObjectId,
-        ref: "products",
-        required: true,
-      },
-      rating: { type: Number, required: true, min: 1, max: 5 },
-      comment: { type: String, maxlength: 1000 },
-    },
+    reviews: [
+      {
+        userId: { type: Schema.Types.ObjectId, ref: "users", required: true },
+        productId: {
+          type: Schema.Types.ObjectId,
+          ref: "Product",
+          required: true,
+        },
+        rating: { type: Number, required: true, min: 1, max: 5 },
+        comment: { type: String, maxlength: 1000 },
+      }
+    ],
 
     isVegan: { type: Boolean, default: false },
     isPromoted: { type: Boolean, default: false },

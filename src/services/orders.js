@@ -34,21 +34,23 @@ export const createOrder = async (data) => {
             throw createHttpError(404, `Product from id ${item.product} not found`);
         }
 
-        const priceInfo = product.priceByVolume.find(v => v.volume === item.selectedVolume);
+        const selectedVolume = Number(item.selectedVolume);
+
+        const priceInfo = product.priceByVolume.find(v => v.volume === selectedVolume);
         if (!priceInfo) {
-            throw createHttpError(400, `Volume "${item.selectedVolume}" unavailable for product "${product.name}"`);
+            throw createHttpError(400, `Volume "${selectedVolume}" unavailable for product "${product.name.en}"`);
         }
 
         const quantity = item.quantity;
-        if (product.stockQuantity < quantity) {
-            throw createHttpError(400, `There is not enough product "${product.name}" on the storage`);
+        if (priceInfo.stockQuantity < quantity) {
+            throw createHttpError(400, `There is not enough product "${product.name.en}" in volume ${selectedVolume}`);
         }
 
-        if (product.stockQuantity - quantity < 5) {
+        if (priceInfo.stockQuantity - quantity < 5) {
             lowStockWarning = true;
         }
 
-        product.stockQuantity -= quantity;
+        priceInfo.stockQuantity -= quantity;
         await product.save();
 
         totalAmount += priceInfo.price * quantity;
@@ -101,28 +103,30 @@ export const deleteOrder = async (id) => {
 
 
 //reserve
-export const reserveProduct = async ({ productId, quantity }) => {
-    if (!productId || !quantity) {
-        throw createHttpError(400, 'ProductId and quantity required');
-    }
-
+export const reserveProduct = async ({ productId, selectedVolume, quantity }) => {
     const product = await ProductModel.findById(productId);
-    if (!product) {
-        throw createHttpError(404, 'Product not found');
+
+    const volume = Number(selectedVolume);
+    const priceInfo = product.priceByVolume.find(v => v.volume === volume);
+
+    if (!priceInfo) {
+        throw createHttpError(400, 'Volume not found');
     }
 
-    if (product.stockQuantity < quantity) {
+    if (priceInfo.stockQuantity < quantity) {
         throw createHttpError(400, 'Not enough stock for reserve');
     }
 
-    product.stockQuantity -= quantity;
+    priceInfo.stockQuantity -= quantity;
     await product.save();
 
     return {
         productId: product._id,
-        remaining: product.stockQuantity,
+        volume,
+        remaining: priceInfo.stockQuantity,
     };
 };
+
 
 export const getLowStockProducts = async () => {
     return ProductModel.find({ stockQuantity: { $lt: 5 } });
