@@ -30,6 +30,28 @@ export const getProducts = async (filter = {}, page = 1, perPage = 10) => {
     totalPages: Math.ceil(totalCount / perPage),
   };
 };
+export const getHomeProducts = async (categories, limit) => {
+  const facet = {};
+
+  for (const category of categories) {
+    facet[category] = [
+      { $match: { category } },
+      { $sample: { size: limit } }, 
+      {
+        $lookup: {
+          from: "reviews",
+          localField: "_id",
+          foreignField: "productId",
+          as: "reviews",
+        },
+      },
+    ];
+  }
+
+  const result = await ProductModel.aggregate([{ $facet: facet }]);
+
+  return result[0];
+};
 
 export const getProductById = async (id) => {
   const product = await ProductModel.findById(id).lean();
@@ -42,9 +64,43 @@ export const createProduct = async (payload) => {
 };
 
 export const updateProduct = async (id, payload, options = {}) => {
+ 
+  const updateData = { ...payload };
+
+ 
+  if (updateData.stockQuantity !== undefined) {
+    const stockQty = Number(updateData.stockQuantity);
+    if (!isNaN(stockQty)) {
+      updateData.stockQuantity = stockQty;
+    } else {
+      delete updateData.stockQuantity;
+    }
+  }
+
+  
+  ["isVegan", "isPromoted", "inStock"].forEach((field) => {
+    if (updateData[field] !== undefined) {
+      updateData[field] = updateData[field] === "true" || updateData[field] === true;
+    }
+  });
+
+  ["volumeOptions", "priceByVolume", "features", "description", "instructions", "activeIngredients", "inciList"].forEach(
+    (field) => {
+      if (updateData[field] !== undefined && typeof updateData[field] === "string") {
+        try {
+          updateData[field] = JSON.parse(updateData[field]);
+        } catch (err) {
+          
+          delete updateData[field];
+        }
+      }
+    }
+  );
+
+  
   const updatedProduct = await ProductModel.findOneAndUpdate(
     { _id: id },
-    payload,
+    updateData,
     {
       new: true,
       runValidators: true,

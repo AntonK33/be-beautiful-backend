@@ -98,6 +98,9 @@ paths:
         $ref: '../swagger/paths/products/post.yaml'
       get: 
         $ref: '../swagger/paths/products/get.yaml'
+  /products/home:   
+      get: 
+        $ref: '../swagger/paths/products/home/get.yaml'
   /products/{productId}:
       get: 
         $ref: '../swagger/paths/products/{productId}/get.yaml'
