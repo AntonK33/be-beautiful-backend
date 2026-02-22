@@ -19,10 +19,43 @@ export const getOrderById = async (id) => {
 
 //create
 export const createOrder = async (data) => {
-    const { clientId, items, customerName, phone, email, comment } = data;
+    const {
+        clientId,
+        items,
+        customerName,
+        phone,
+        email,
+        comment,
+        deliveryType,
+        city,
+        street,
+        house,
+        apartment,
+        branchNumber,
+        paymentMethod,
+        certificateCode,
+        certificateDiscount = 0,
+    } = data;
 
     if (!clientId || !Array.isArray(items) || items.length === 0) {
-        throw createHttpError(400, '⚠️ items is not an array');
+        throw createHttpError(400, 'Items must be a non-empty array');
+    }
+
+    if (!deliveryType || !city) {
+        throw createHttpError(400, 'Delivery type and city are required');
+    }
+
+    // === CONDITIONAL DELIVERY VALIDATION ===
+    if (deliveryType === 'address') {
+        if (!street || !house) {
+            throw createHttpError(400, 'Street and house are required for address delivery');
+        }
+    }
+
+    if (deliveryType === 'branch') {
+        if (!branchNumber) {
+            throw createHttpError(400, 'Branch number is required for branch delivery');
+        }
     }
 
     let totalAmount = 0;
@@ -30,33 +63,62 @@ export const createOrder = async (data) => {
 
     for (const item of items) {
         const product = await ProductModel.findById(item.product);
+
         if (!product) {
-            throw createHttpError(404, `Product from id ${item.product} not found`);
+            throw createHttpError(404, `Product ${item.product} not found`);
         }
 
         const selectedVolume = Number(item.selectedVolume);
 
-        const priceInfo = product.priceByVolume.find(v => v.volume === selectedVolume);
+        const priceInfo = product.priceByVolume.find(
+            (v) => v.volume === selectedVolume
+        );
+
         if (!priceInfo) {
-            throw createHttpError(400, `Volume "${selectedVolume}" unavailable for product "${product.name.en}"`);
+            throw createHttpError(
+                400,
+                `Volume ${selectedVolume} unavailable`
+            );
         }
 
-        const quantity = item.quantity;
-        if (priceInfo.stockQuantity < quantity) {
-            throw createHttpError(400, `There is not enough product "${product.name.en}" in volume ${selectedVolume}`);
+        if (priceInfo.stockQuantity < item.quantity) {
+            throw createHttpError(
+                400,
+                `Not enough stock for volume ${selectedVolume}`
+            );
         }
 
-        if (priceInfo.stockQuantity - quantity < 5) {
+        if (priceInfo.stockQuantity - item.quantity < 5) {
             lowStockWarning = true;
         }
 
-        priceInfo.stockQuantity -= quantity;
+        // уменьшаем остаток
+        priceInfo.stockQuantity -= item.quantity;
         await product.save();
 
-        totalAmount += priceInfo.price * quantity;
+        totalAmount += priceInfo.price * item.quantity;
     }
 
-    const paymentLink = `https://example.com/pay/${Date.now()}`;
+    // === CERTIFICATE LOGIC ===
+    let finalAmount = totalAmount;
+
+    if (certificateCode) {
+        if (certificateDiscount <= 0) {
+            throw createHttpError(400, 'Invalid certificate discount');
+        }
+
+        finalAmount = totalAmount - certificateDiscount;
+
+        if (finalAmount < 0) {
+            finalAmount = 0;
+        }
+    }
+
+    // === PAYMENT LINK ===
+    const paymentLink =
+        paymentMethod === 'liqpay'
+            ? `https://example.com/pay/${Date.now()}`
+            : null;
 
     const newOrder = await OrderModel.create({
         clientId,
@@ -65,9 +127,25 @@ export const createOrder = async (data) => {
         email,
         comment,
         deliveryMethod: 'nova_poshta',
-        items,
-        totalAmount,
+
+        deliveryType,
+        city,
+        street,
+        house,
+        apartment,
+        branchNumber,
+
+        paymentMethod,
         paymentLink,
+
+        certificateCode: certificateCode || null,
+        certificateDiscount: certificateDiscount || 0,
+
+        items,
+
+        totalAmount,
+        finalAmount,
+
         lowStockWarning,
     });
 
@@ -127,7 +205,8 @@ export const reserveProduct = async ({ productId, selectedVolume, quantity }) =>
     };
 };
 
-
 export const getLowStockProducts = async () => {
-    return ProductModel.find({ stockQuantity: { $lt: 5 } });
+    return ProductModel.find({
+        'priceByVolume.stockQuantity': { $lt: 5 }
+    });
 };
