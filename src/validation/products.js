@@ -2,28 +2,30 @@ import Joi from "joi";
 
 export const createProductSchema = Joi.object({
   name: Joi.object({
-    en: Joi.string().min(2).max(100).required(),
+    en: Joi.string().min(2).max(100).optional(),
     ua: Joi.string().min(2).max(100).required(),
   }).required(),
 
   sku: Joi.string().allow("").optional(),
 
-  volumeOptions: Joi.array().items(Joi.number().positive()).min(1).required(),
+  volumeOptions: Joi.array()
+    .items(Joi.number().positive())
+    .min(1)
+    .required(),
 
   priceByVolume: Joi.array()
     .items(
       Joi.object({
         volume: Joi.number().positive().required(),
         price: Joi.number().positive().required(),
+        stockQuantity: Joi.number().integer().min(0).required(),
       })
     )
     .min(1)
     .required(),
 
-  stockQuantity: Joi.number().integer().min(0).required(),
-
   features: Joi.object({
-    en: Joi.array().items(Joi.string()).min(1).required(),
+    en: Joi.array().items(Joi.string()).optional(),
     ua: Joi.array().items(Joi.string()).min(1).required(),
   }).required(),
 
@@ -41,7 +43,7 @@ export const createProductSchema = Joi.object({
     .items(
       Joi.object({
         name: Joi.object({
-          en: Joi.string().required(),
+          en: Joi.string().optional(),
           ua: Joi.string().required(),
         }).required(),
         description: Joi.object({
@@ -59,15 +61,16 @@ export const createProductSchema = Joi.object({
     .required(),
 
   isVegan: Joi.boolean().default(false),
-  imageUrl: Joi.string().uri().optional(),
-  inStock: Joi.boolean().default(true),
-});
+  isPromoted: Joi.boolean().default(false),
 
+  imageUrl: Joi.string().uri().optional(),
+  inStock: Joi.boolean().optional(),
+});
 
 export const updateProductSchema = Joi.object({
   name: Joi.object({
-    en: Joi.string().min(2).max(100),
-    ua: Joi.string().min(2).max(100),
+    en: Joi.string().min(2).max(100).optional(),
+    ua: Joi.string().min(2).max(100).optional(),
   }),
 
   sku: Joi.string().allow(""),
@@ -78,32 +81,31 @@ export const updateProductSchema = Joi.object({
     Joi.object({
       volume: Joi.number().positive().required(),
       price: Joi.number().positive().required(),
+      stockQuantity: Joi.number().integer().min(0).required(),
     })
   ),
 
-  stockQuantity: Joi.number().integer().min(0),
-
   features: Joi.object({
-    en: Joi.array().items(Joi.string()).min(1),
-    ua: Joi.array().items(Joi.string()).min(1),
+    en: Joi.array().items(Joi.string()).optional(),
+    ua: Joi.array().items(Joi.string()).optional(),
   }),
 
   description: Joi.object({
-    en: Joi.string(),
-    ua: Joi.string(),
+    en: Joi.string().optional(),
+    ua: Joi.string().optional(),
   }),
 
   instructions: Joi.object({
-    en: Joi.string(),
-    ua: Joi.string(),
+    en: Joi.string().optional(),
+    ua: Joi.string().optional(),
   }),
 
   activeIngredients: Joi.array().items(
     Joi.object({
       name: Joi.object({
-        en: Joi.string().required(),
+        en: Joi.string().optional(),
         ua: Joi.string().required(),
-      }),
+      }).required(),
       description: Joi.object({
         en: Joi.string().optional(),
         ua: Joi.string().optional(),
@@ -116,7 +118,8 @@ export const updateProductSchema = Joi.object({
   category: Joi.string().valid("hair", "face", "body", "makeup", "home"),
 
   isVegan: Joi.boolean(),
+  isPromoted: Joi.boolean(),
+
   imageUrl: Joi.string().uri(),
   inStock: Joi.boolean(),
 }).min(1);
-
