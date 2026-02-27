@@ -37,7 +37,7 @@ export const createOrder = async (data) => {
         certificateDiscount = 0,
     } = data;
 
-    if (!clientId || !Array.isArray(items) || items.length === 0) {
+    if (!Array.isArray(items) || items.length === 0) {
         throw createHttpError(400, 'Items must be a non-empty array');
     }
 
