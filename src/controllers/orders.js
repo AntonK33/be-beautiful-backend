@@ -21,7 +21,12 @@ export const getOrderByIdController = async (req, res, next) => {
 
 export const createOrderController = async (req, res, next) => {
     try {
-        const order = await orderService.createOrder(req.body);
+        const orderData = {
+            ...req.body,
+            clientId: req.user?._id || null,
+        };
+
+        const order = await orderService.createOrder(orderData);
         res.status(201).json({
             message: 'Order successfully created!',
             order,

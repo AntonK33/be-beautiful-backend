@@ -12,7 +12,7 @@ const orderItemSchema = new Schema(
 const orderSchema = new Schema(
     {
         // === CLIENT ===
-        clientId: { type: String, required: true },
+        clientId: { type: String, default: null },
         customerName: { type: String },
         phone: { type: String },
         email: { type: String },
