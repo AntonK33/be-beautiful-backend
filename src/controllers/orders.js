@@ -19,14 +19,30 @@ export const getOrderByIdController = async (req, res, next) => {
     }
 };
 
+export const getMyOrdersController = async (req, res, next) => {
+    try {
+        if (!req.user) return res.status(401).json({ message: 'Not authorized' });
+
+        const orders = await orderService.getOrdersByUser(req.user._id);
+        res.json(orders);
+    } catch (err) {
+        next(err);
+    }
+};
+
 export const createOrderController = async (req, res, next) => {
     try {
+        if (!req.user) {
+            throw createHttpError(401, 'Not authorized');
+        }
+
         const orderData = {
             ...req.body,
-            clientId: req.user?._id || null,
+            clientId: req.user._id,
         };
 
         const order = await orderService.createOrder(orderData);
+
         res.status(201).json({
             message: 'Order successfully created!',
             order,

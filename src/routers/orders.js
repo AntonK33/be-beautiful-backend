@@ -13,13 +13,16 @@ import {
 import { validateBody } from '../middlewares/validateBody.js';
 import { isValidId } from '../middlewares/isValidId.js';
 import { orderSchema, reserveSchema } from '../validation/orderSchemas.js';
-import { authenticateOptional } from '../middlewares/authenticateOptional.js';
+import { getMyOrdersController } from '../controllers/orders.js';
+import { authenticate } from '../middlewares/authenticate.js';
 
 const router = express.Router();
 
+router.get('/my', authenticate, getMyOrdersController);
+
 router.post(
     '/',
-    authenticateOptional,
+    authenticate,
     validateBody(orderSchema),
     createOrderController
 );

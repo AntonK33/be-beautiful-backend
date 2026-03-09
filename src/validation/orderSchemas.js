@@ -36,6 +36,7 @@ export const orderSchema = Joi.object({
         then: Joi.required(),
         otherwise: Joi.optional(),
     }),
+    branchName: Joi.string().allow('', null),
 
     paymentMethod: Joi.string()
         .valid('liqpay', 'requisites', 'cod')
