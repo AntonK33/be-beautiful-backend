@@ -1,21 +1,34 @@
 import { Schema, model, Types } from 'mongoose';
 
 const cartItemSchema = new Schema({
+
+    type: {
+        type: String,
+        enum: ['product', 'certificate'],
+        required: true
+    },
+
     productId: {
         type: Types.ObjectId,
-        ref: 'Product',
-        required: true,
+        ref: 'Product'
     },
+
+    certificateId: {
+        type: Types.ObjectId,
+        ref: 'Certificate'
+    },
+
     quantity: {
         type: Number,
         required: true,
-        min: [1, 'Quantity must be at least 1'],
+        min: [1, 'Quantity must be at least 1']
     },
+
     selectedVariantId: {
         type: Types.ObjectId,
-        ref: 'Product.priceByVolume',
-        required: true, 
-    },
+        ref: 'Product.priceByVolume'
+    }
+
 });
 
 

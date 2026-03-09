@@ -4,19 +4,21 @@ import { UsersCollection } from '../db/models/auth.js';
 export const authenticateOptional = async (req, _res, next) => {
     try {
         const authHeader = req.headers.authorization || '';
-        const [bearer, token] = authHeader.split(' ');
+        const token = authHeader.split(' ')[1];
 
-        if (bearer === 'Bearer' && token) {
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            const user = await UsersCollection.findById(decoded.id);
-
-            if (user) {
-                req.user = user;
-            }
+        if (!token) {
+            req.user = null;
+            return next();
         }
 
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const userId = decoded.id || decoded._id;
+        const user = await UsersCollection.findById(userId);
+
+        req.user = user || null;
         next();
     } catch (err) {
+        req.user = null;
         next();
     }
 };

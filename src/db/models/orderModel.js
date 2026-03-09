@@ -12,7 +12,12 @@ const orderItemSchema = new Schema(
 const orderSchema = new Schema(
     {
         // === CLIENT ===
-        clientId: { type: String, default: null },
+        clientId: {
+            type: Types.ObjectId,
+            ref: 'User',
+            default: null,
+        },
+
         customerName: { type: String },
         phone: { type: String },
         email: { type: String },
@@ -37,13 +42,14 @@ const orderSchema = new Schema(
 
         city: { type: String, required: true },
 
-        // for address delivery
+        // address delivery
         street: { type: String },
         house: { type: String },
         apartment: { type: String },
 
-        // for branch delivery
+        // branch delivery
         branchNumber: { type: String },
+        branchName: { type: String },
 
         // === PAYMENT ===
         paymentMethod: {
@@ -74,12 +80,12 @@ const orderSchema = new Schema(
         // === SUMS ===
         totalAmount: {
             type: Number,
-            default: 0, // сумма товаров
+            default: 0,
         },
 
         finalAmount: {
             type: Number,
-            default: 0, // сумма к оплате после скидки
+            default: 0,
         },
 
         lowStockWarning: {
@@ -92,11 +98,19 @@ const orderSchema = new Schema(
             enum: ['draft', 'ordered', 'payed', 'done'],
             default: 'draft',
         },
+
+        orderNumber: {
+            type: String,
+            unique: true,
+        }
+
     },
     {
         timestamps: true,
         versionKey: false,
     }
 );
+
+orderSchema.index({ orderNumber: 1 });
 
 export const OrderModel = model('Order', orderSchema);

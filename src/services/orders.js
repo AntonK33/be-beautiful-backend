@@ -15,10 +15,16 @@ export const getOrderById = async (id) => {
     }
     return order;
 };
-
+export const getOrdersByUser = async (userId) => {
+    return OrderModel
+        .find({ clientId: userId })
+        .populate('items.product')
+        .sort({ createdAt: -1 });
+};
 
 //create
 export const createOrder = async (data) => {
+
     const {
         clientId,
         items,
@@ -32,11 +38,14 @@ export const createOrder = async (data) => {
         house,
         apartment,
         branchNumber,
+        branchName,
         paymentMethod,
         certificateCode,
         certificateDiscount = 0,
     } = data;
 
+
+    // === VALIDATION ===
     if (!Array.isArray(items) || items.length === 0) {
         throw createHttpError(400, 'Items must be a non-empty array');
     }
@@ -45,7 +54,6 @@ export const createOrder = async (data) => {
         throw createHttpError(400, 'Delivery type and city are required');
     }
 
-    // === CONDITIONAL DELIVERY VALIDATION ===
     if (deliveryType === 'address') {
         if (!street || !house) {
             throw createHttpError(400, 'Street and house are required for address delivery');
@@ -58,10 +66,28 @@ export const createOrder = async (data) => {
         }
     }
 
+
+    // === GENERATE ORDER NUMBER ===
+    const lastOrder = await OrderModel
+        .findOne()
+        .sort({ createdAt: -1 });
+
+    let orderNumber = "BB-100001";
+
+    if (lastOrder && lastOrder.orderNumber) {
+
+        const lastNumber = parseInt(lastOrder.orderNumber.split('-')[1]);
+
+        orderNumber = `BB-${lastNumber + 1}`;
+    }
+
+
+    // === PRODUCTS ===
     let totalAmount = 0;
     let lowStockWarning = false;
 
     for (const item of items) {
+
         const product = await ProductModel.findById(item.product);
 
         if (!product) {
@@ -75,34 +101,30 @@ export const createOrder = async (data) => {
         );
 
         if (!priceInfo) {
-            throw createHttpError(
-                400,
-                `Volume ${selectedVolume} unavailable`
-            );
+            throw createHttpError(400, `Volume ${selectedVolume} unavailable`);
         }
 
         if (priceInfo.stockQuantity < item.quantity) {
-            throw createHttpError(
-                400,
-                `Not enough stock for volume ${selectedVolume}`
-            );
+            throw createHttpError(400, `Not enough stock for volume ${selectedVolume}`);
         }
 
         if (priceInfo.stockQuantity - item.quantity < 5) {
             lowStockWarning = true;
         }
 
-        // уменьшаем остаток
         priceInfo.stockQuantity -= item.quantity;
+
         await product.save();
 
         totalAmount += priceInfo.price * item.quantity;
     }
 
-    // === CERTIFICATE LOGIC ===
+
+    // === CERTIFICATE ===
     let finalAmount = totalAmount;
 
     if (certificateCode) {
+
         if (certificateDiscount <= 0) {
             throw createHttpError(400, 'Invalid certificate discount');
         }
@@ -114,18 +136,26 @@ export const createOrder = async (data) => {
         }
     }
 
+
     // === PAYMENT LINK ===
     const paymentLink =
         paymentMethod === 'liqpay'
             ? `https://example.com/pay/${Date.now()}`
             : null;
 
+
+    // === CREATE ORDER ===
     const newOrder = await OrderModel.create({
+
+        orderNumber,
+
         clientId,
+
         customerName,
         phone,
         email,
         comment,
+
         deliveryMethod: 'nova_poshta',
 
         deliveryType,
@@ -134,6 +164,7 @@ export const createOrder = async (data) => {
         house,
         apartment,
         branchNumber,
+        branchName,
 
         paymentMethod,
         paymentLink,
@@ -150,6 +181,7 @@ export const createOrder = async (data) => {
     });
 
     return newOrder;
+
 };
 
 //update
